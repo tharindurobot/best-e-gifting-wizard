@@ -1,10 +1,10 @@
-
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { AspectRatio } from '@/components/ui/aspect-ratio';
 import { DataService } from '@/services/dataService';
 import { Item } from '@/types';
 
@@ -160,11 +160,13 @@ const ItemManagement = () => {
                 .map((item) => (
                   <Card key={item.id}>
                     <CardContent className="p-4">
-                      <img
-                        src={item.image}
-                        alt={item.name}
-                        className="w-full h-32 object-cover rounded mb-3"
-                      />
+                      <AspectRatio ratio={1} className="mb-3">
+                        <img
+                          src={item.image}
+                          alt={item.name}
+                          className="w-full h-full object-cover rounded"
+                        />
+                      </AspectRatio>
                       <h4 className="font-semibold">{item.name}</h4>
                       <p className="text-sm text-gray-600">{item.category}</p>
                       <p className="text-lg font-bold text-primary-600">Rs {item.price.toFixed(2)}</p>

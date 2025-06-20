@@ -1,8 +1,10 @@
+
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { AspectRatio } from '@/components/ui/aspect-ratio';
 import { useOrder } from '@/context/OrderContext';
 import { DataService } from '@/services/dataService';
 import { Item } from '@/types';
@@ -89,11 +91,13 @@ const SelectItems = () => {
                   return (
                     <Card key={item.id} className="hover:shadow-lg transition-shadow">
                       <CardContent className="p-6">
-                        <img
-                          src={item.image}
-                          alt={item.name}
-                          className="w-full h-40 object-cover rounded-lg mb-4"
-                        />
+                        <AspectRatio ratio={1} className="mb-4">
+                          <img
+                            src={item.image}
+                            alt={item.name}
+                            className="w-full h-full object-cover rounded-lg"
+                          />
+                        </AspectRatio>
                         <h3 className="text-lg font-semibold mb-2">{item.name}</h3>
                         <p className="text-xl font-bold text-primary-600 mb-4">Rs {item.price.toFixed(2)}</p>
                         

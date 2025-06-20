@@ -1,6 +1,7 @@
 
 import React from 'react';
 import { useOrder } from '@/context/OrderContext';
+import Navigation from './Navigation';
 
 const Header = () => {
   const { getTotalPrice, order } = useOrder();
@@ -23,14 +24,29 @@ const Header = () => {
           </div>
           
           <div className="flex items-center space-x-6">
-            <div className="text-right">
-              <p className="text-sm text-primary-100">Items in Cart</p>
-              <p className="text-xl font-semibold">{itemCount}</p>
+            <div className="hidden sm:flex items-center space-x-6">
+              <div className="text-right">
+                <p className="text-sm text-primary-100">Items in Cart</p>
+                <p className="text-xl font-semibold">{itemCount}</p>
+              </div>
+              <div className="text-right">
+                <p className="text-sm text-primary-100">Total</p>
+                <p className="text-xl font-semibold">Rs {getTotalPrice().toFixed(2)}</p>
+              </div>
             </div>
-            <div className="text-right">
-              <p className="text-sm text-primary-100">Total</p>
-              <p className="text-xl font-semibold">Rs {getTotalPrice().toFixed(2)}</p>
-            </div>
+            <Navigation />
+          </div>
+        </div>
+        
+        {/* Mobile cart info */}
+        <div className="sm:hidden mt-4 flex justify-between text-sm">
+          <div>
+            <span className="text-primary-100">Items: </span>
+            <span className="font-semibold">{itemCount}</span>
+          </div>
+          <div>
+            <span className="text-primary-100">Total: </span>
+            <span className="font-semibold">Rs {getTotalPrice().toFixed(2)}</span>
           </div>
         </div>
       </div>
