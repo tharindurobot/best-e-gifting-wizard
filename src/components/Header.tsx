@@ -1,0 +1,34 @@
+
+import React from 'react';
+import { useOrder } from '@/context/OrderContext';
+
+const Header = () => {
+  const { getTotalPrice, order } = useOrder();
+  const itemCount = order.items.reduce((total, item) => total + item.quantity, 0);
+
+  return (
+    <header className="bg-gradient-to-r from-primary-700 to-primary-900 text-white shadow-lg">
+      <div className="container mx-auto px-4 py-6">
+        <div className="flex justify-between items-center">
+          <div>
+            <h1 className="text-3xl font-bold tracking-wider">BEST E</h1>
+            <p className="text-primary-100 text-sm">Premium Gift Box Experience</p>
+          </div>
+          
+          <div className="flex items-center space-x-6">
+            <div className="text-right">
+              <p className="text-sm text-primary-100">Items in Cart</p>
+              <p className="text-xl font-semibold">{itemCount}</p>
+            </div>
+            <div className="text-right">
+              <p className="text-sm text-primary-100">Total</p>
+              <p className="text-xl font-semibold">${getTotalPrice().toFixed(2)}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+  );
+};
+
+export default Header;
