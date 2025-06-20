@@ -1,23 +1,30 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useOrder } from '@/context/OrderContext';
-import { mockItems } from '@/data/mockData';
+import { DataService } from '@/services/dataService';
+import { Item } from '@/types';
 
 const SelectItems = () => {
   const { addItem, updateItemQuantity, removeItem, setCurrentStep, order } = useOrder();
   const [quantities, setQuantities] = useState<{ [key: string]: number }>({});
+  const [items, setItems] = useState<Item[]>([]);
 
   const categories = ['Chocolates', 'Toys', 'Accessories'];
+
+  useEffect(() => {
+    const storedItems = DataService.getItems();
+    setItems(storedItems);
+  }, []);
 
   const handleQuantityChange = (itemId: string, quantity: number) => {
     setQuantities(prev => ({ ...prev, [itemId]: quantity }));
   };
 
-  const handleAddItem = (item: typeof mockItems[0]) => {
+  const handleAddItem = (item: Item) => {
     const quantity = quantities[item.id] || 1;
     addItem(item, quantity);
     setQuantities(prev => ({ ...prev, [item.id]: 0 }));
@@ -53,7 +60,7 @@ const SelectItems = () => {
         {categories.map((category) => (
           <TabsContent key={category} value={category} className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {mockItems
+              {items
                 .filter(item => item.category === category)
                 .map((item) => {
                   const cartQuantity = getItemQuantityInCart(item.id);

@@ -1,14 +1,21 @@
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { useOrder } from '@/context/OrderContext';
-import { mockBoxes } from '@/data/mockData';
+import { DataService } from '@/services/dataService';
+import { Box } from '@/types';
 
 const SelectBox = () => {
   const { selectBox, setCurrentStep, order } = useOrder();
+  const [boxes, setBoxes] = useState<Box[]>([]);
 
-  const handleSelectBox = (box: typeof mockBoxes[0]) => {
+  useEffect(() => {
+    const storedBoxes = DataService.getBoxes();
+    setBoxes(storedBoxes);
+  }, []);
+
+  const handleSelectBox = (box: Box) => {
     selectBox(box);
   };
 
@@ -26,7 +33,7 @@ const SelectBox = () => {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {mockBoxes.map((box) => (
+        {boxes.map((box) => (
           <Card key={box.id} className={`cursor-pointer transition-all duration-300 hover:shadow-lg ${
             order.box?.id === box.id ? 'ring-2 ring-primary-600 shadow-lg' : ''
           }`}>

@@ -1,14 +1,14 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { mockBoxes } from '@/data/mockData';
+import { DataService } from '@/services/dataService';
 import { Box } from '@/types';
 
 const BoxManagement = () => {
-  const [boxes, setBoxes] = useState<Box[]>(mockBoxes);
+  const [boxes, setBoxes] = useState<Box[]>([]);
   const [editingBox, setEditingBox] = useState<Box | null>(null);
   const [formData, setFormData] = useState({
     name: '',
@@ -16,6 +16,15 @@ const BoxManagement = () => {
     price: 0,
     image: ''
   });
+
+  useEffect(() => {
+    loadBoxes();
+  }, []);
+
+  const loadBoxes = () => {
+    const storedBoxes = DataService.getBoxes();
+    setBoxes(storedBoxes);
+  };
 
   const handleEdit = (box: Box) => {
     setEditingBox(box);
@@ -28,26 +37,33 @@ const BoxManagement = () => {
   };
 
   const handleSave = () => {
+    let updatedBoxes: Box[];
+    
     if (editingBox) {
-      setBoxes(boxes.map(box => 
+      updatedBoxes = boxes.map(box => 
         box.id === editingBox.id 
           ? { ...box, ...formData }
           : box
-      ));
+      );
     } else {
       const newBox: Box = {
         id: Date.now().toString(),
         ...formData
       };
-      setBoxes([...boxes, newBox]);
+      updatedBoxes = [...boxes, newBox];
     }
+    
+    setBoxes(updatedBoxes);
+    DataService.saveBoxes(updatedBoxes);
     
     setEditingBox(null);
     setFormData({ name: '', color: '', price: 0, image: '' });
   };
 
   const handleDelete = (id: string) => {
-    setBoxes(boxes.filter(box => box.id !== id));
+    const updatedBoxes = boxes.filter(box => box.id !== id);
+    setBoxes(updatedBoxes);
+    DataService.saveBoxes(updatedBoxes);
   };
 
   const handleCancel = () => {
@@ -82,7 +98,7 @@ const BoxManagement = () => {
               />
             </div>
             <div>
-              <Label htmlFor="price">Price ($)</Label>
+              <Label htmlFor="price">Price (Rs)</Label>
               <Input
                 id="price"
                 type="number"
@@ -126,7 +142,7 @@ const BoxManagement = () => {
               />
               <h3 className="font-semibold">{box.name}</h3>
               <p className="text-sm text-gray-600">Color: {box.color}</p>
-              <p className="text-lg font-bold text-primary-600">${box.price.toFixed(2)}</p>
+              <p className="text-lg font-bold text-primary-600">Rs {box.price.toFixed(2)}</p>
               <div className="flex gap-2 mt-3">
                 <Button size="sm" onClick={() => handleEdit(box)}>
                   Edit

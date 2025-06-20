@@ -1,15 +1,15 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { mockItems } from '@/data/mockData';
+import { DataService } from '@/services/dataService';
 import { Item } from '@/types';
 
 const ItemManagement = () => {
-  const [items, setItems] = useState<Item[]>(mockItems);
+  const [items, setItems] = useState<Item[]>([]);
   const [editingItem, setEditingItem] = useState<Item | null>(null);
   const [formData, setFormData] = useState({
     name: '',
@@ -19,6 +19,15 @@ const ItemManagement = () => {
   });
 
   const categories = ['Chocolates', 'Toys', 'Accessories'];
+
+  useEffect(() => {
+    loadItems();
+  }, []);
+
+  const loadItems = () => {
+    const storedItems = DataService.getItems();
+    setItems(storedItems);
+  };
 
   const handleEdit = (item: Item) => {
     setEditingItem(item);
@@ -31,26 +40,33 @@ const ItemManagement = () => {
   };
 
   const handleSave = () => {
+    let updatedItems: Item[];
+    
     if (editingItem) {
-      setItems(items.map(item => 
+      updatedItems = items.map(item => 
         item.id === editingItem.id 
           ? { ...item, ...formData }
           : item
-      ));
+      );
     } else {
       const newItem: Item = {
         id: Date.now().toString(),
         ...formData
       };
-      setItems([...items, newItem]);
+      updatedItems = [...items, newItem];
     }
+    
+    setItems(updatedItems);
+    DataService.saveItems(updatedItems);
     
     setEditingItem(null);
     setFormData({ name: '', category: '', price: 0, image: '' });
   };
 
   const handleDelete = (id: string) => {
-    setItems(items.filter(item => item.id !== id));
+    const updatedItems = items.filter(item => item.id !== id);
+    setItems(updatedItems);
+    DataService.saveItems(updatedItems);
   };
 
   const handleCancel = () => {
@@ -91,7 +107,7 @@ const ItemManagement = () => {
               </Select>
             </div>
             <div>
-              <Label htmlFor="price">Price ($)</Label>
+              <Label htmlFor="price">Price (Rs)</Label>
               <Input
                 id="price"
                 type="number"
@@ -141,7 +157,7 @@ const ItemManagement = () => {
                       />
                       <h4 className="font-semibold">{item.name}</h4>
                       <p className="text-sm text-gray-600">{item.category}</p>
-                      <p className="text-lg font-bold text-primary-600">${item.price.toFixed(2)}</p>
+                      <p className="text-lg font-bold text-primary-600">Rs {item.price.toFixed(2)}</p>
                       <div className="flex gap-2 mt-3">
                         <Button size="sm" onClick={() => handleEdit(item)}>
                           Edit

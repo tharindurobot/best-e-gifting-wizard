@@ -1,6 +1,7 @@
 
 import React from 'react';
 import { OrderProvider, useOrder } from '@/context/OrderContext';
+import { AuthProvider } from '@/context/AuthContext';
 import Header from '@/components/Header';
 import ProgressBar from '@/components/ProgressBar';
 import SelectBox from '@/components/steps/SelectBox';
@@ -46,9 +47,11 @@ const OrderFlow = () => {
 
 const Index = () => {
   return (
-    <OrderProvider>
-      <OrderFlow />
-    </OrderProvider>
+    <AuthProvider>
+      <OrderProvider>
+        <OrderFlow />
+      </OrderProvider>
+    </AuthProvider>
   );
 };
 

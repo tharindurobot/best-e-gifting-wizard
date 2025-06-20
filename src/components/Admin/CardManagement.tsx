@@ -1,20 +1,29 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { mockGreetingCards } from '@/data/mockData';
+import { DataService } from '@/services/dataService';
 import { GreetingCard } from '@/types';
 
 const CardManagement = () => {
-  const [cards, setCards] = useState<GreetingCard[]>(mockGreetingCards);
+  const [cards, setCards] = useState<GreetingCard[]>([]);
   const [editingCard, setEditingCard] = useState<GreetingCard | null>(null);
   const [formData, setFormData] = useState({
     name: '',
     price: 0,
     image: ''
   });
+
+  useEffect(() => {
+    loadCards();
+  }, []);
+
+  const loadCards = () => {
+    const storedCards = DataService.getCards();
+    setCards(storedCards);
+  };
 
   const handleEdit = (card: GreetingCard) => {
     setEditingCard(card);
@@ -26,26 +35,33 @@ const CardManagement = () => {
   };
 
   const handleSave = () => {
+    let updatedCards: GreetingCard[];
+    
     if (editingCard) {
-      setCards(cards.map(card => 
+      updatedCards = cards.map(card => 
         card.id === editingCard.id 
           ? { ...card, ...formData }
           : card
-      ));
+      );
     } else {
       const newCard: GreetingCard = {
         id: Date.now().toString(),
         ...formData
       };
-      setCards([...cards, newCard]);
+      updatedCards = [...cards, newCard];
     }
+    
+    setCards(updatedCards);
+    DataService.saveCards(updatedCards);
     
     setEditingCard(null);
     setFormData({ name: '', price: 0, image: '' });
   };
 
   const handleDelete = (id: string) => {
-    setCards(cards.filter(card => card.id !== id));
+    const updatedCards = cards.filter(card => card.id !== id);
+    setCards(updatedCards);
+    DataService.saveCards(updatedCards);
   };
 
   const handleCancel = () => {
@@ -71,7 +87,7 @@ const CardManagement = () => {
               />
             </div>
             <div>
-              <Label htmlFor="price">Price ($)</Label>
+              <Label htmlFor="price">Price (Rs)</Label>
               <Input
                 id="price"
                 type="number"
@@ -114,7 +130,7 @@ const CardManagement = () => {
                 className="w-full h-40 object-cover rounded mb-3"
               />
               <h3 className="font-semibold">{card.name}</h3>
-              <p className="text-lg font-bold text-primary-600">${card.price.toFixed(2)}</p>
+              <p className="text-lg font-bold text-primary-600">Rs {card.price.toFixed(2)}</p>
               <div className="flex gap-2 mt-3">
                 <Button size="sm" onClick={() => handleEdit(card)}>
                   Edit
