@@ -29,6 +29,11 @@ const ItemManagement = () => {
     setItems(storedItems);
   };
 
+  const notifyDataUpdate = () => {
+    // Dispatch custom event to notify other components
+    window.dispatchEvent(new CustomEvent('adminDataUpdate'));
+  };
+
   const handleEdit = (item: Item) => {
     setEditingItem(item);
     setFormData({
@@ -48,16 +53,19 @@ const ItemManagement = () => {
           ? { ...item, ...formData }
           : item
       );
+      console.log('Updated item:', { ...editingItem, ...formData });
     } else {
       const newItem: Item = {
         id: Date.now().toString(),
         ...formData
       };
       updatedItems = [...items, newItem];
+      console.log('Added new item:', newItem);
     }
     
     setItems(updatedItems);
     DataService.saveItems(updatedItems);
+    notifyDataUpdate();
     
     setEditingItem(null);
     setFormData({ name: '', category: '', price: 0, image: '' });
@@ -67,6 +75,8 @@ const ItemManagement = () => {
     const updatedItems = items.filter(item => item.id !== id);
     setItems(updatedItems);
     DataService.saveItems(updatedItems);
+    notifyDataUpdate();
+    console.log('Deleted item with id:', id);
   };
 
   const handleCancel = () => {

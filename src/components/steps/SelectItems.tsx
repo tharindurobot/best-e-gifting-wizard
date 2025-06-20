@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -16,9 +15,30 @@ const SelectItems = () => {
   const categories = ['Chocolates', 'Toys', 'Accessories'];
 
   useEffect(() => {
+    loadItems();
+  }, []);
+
+  // Listen for storage changes
+  useEffect(() => {
+    const handleStorageChange = () => {
+      loadItems();
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+    
+    // Also listen for custom events from admin panel
+    window.addEventListener('adminDataUpdate', handleStorageChange);
+
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener('adminDataUpdate', handleStorageChange);
+    };
+  }, []);
+
+  const loadItems = () => {
     const storedItems = DataService.getItems();
     setItems(storedItems);
-  }, []);
+  };
 
   const handleQuantityChange = (itemId: string, quantity: number) => {
     setQuantities(prev => ({ ...prev, [itemId]: quantity }));

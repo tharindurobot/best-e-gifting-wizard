@@ -11,9 +11,28 @@ const SelectBox = () => {
   const [boxes, setBoxes] = useState<Box[]>([]);
 
   useEffect(() => {
+    loadBoxes();
+  }, []);
+
+  // Listen for storage changes
+  useEffect(() => {
+    const handleStorageChange = () => {
+      loadBoxes();
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+    window.addEventListener('adminDataUpdate', handleStorageChange);
+
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener('adminDataUpdate', handleStorageChange);
+    };
+  }, []);
+
+  const loadBoxes = () => {
     const storedBoxes = DataService.getBoxes();
     setBoxes(storedBoxes);
-  }, []);
+  };
 
   const handleSelectBox = (box: Box) => {
     selectBox(box);
