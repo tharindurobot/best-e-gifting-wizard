@@ -10,9 +10,16 @@ const Header = () => {
     <header className="bg-gradient-to-r from-primary-700 to-primary-900 text-white shadow-lg">
       <div className="container mx-auto px-4 py-6">
         <div className="flex justify-between items-center">
-          <div>
-            <h1 className="text-3xl font-bold tracking-wider">BEST E</h1>
-            <p className="text-primary-100 text-sm">Premium Gift Box Experience</p>
+          <div className="flex items-center space-x-3">
+            <img 
+              src="/lovable-uploads/5430729f-f06f-43cf-b98f-83a68ac00d9f.png" 
+              alt="BEST E Logo" 
+              className="w-12 h-12 rounded-full object-cover"
+            />
+            <div>
+              <h1 className="text-3xl font-bold tracking-wider">BEST E</h1>
+              <p className="text-primary-100 text-sm">Premium Gift Box Experience</p>
+            </div>
           </div>
           
           <div className="flex items-center space-x-6">
@@ -22,7 +29,7 @@ const Header = () => {
             </div>
             <div className="text-right">
               <p className="text-sm text-primary-100">Total</p>
-              <p className="text-xl font-semibold">${getTotalPrice().toFixed(2)}</p>
+              <p className="text-xl font-semibold">Rs {getTotalPrice().toFixed(2)}</p>
             </div>
           </div>
         </div>

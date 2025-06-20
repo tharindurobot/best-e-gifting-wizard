@@ -68,7 +68,7 @@ const SelectItems = () => {
                           className="w-full h-40 object-cover rounded-lg mb-4"
                         />
                         <h3 className="text-lg font-semibold mb-2">{item.name}</h3>
-                        <p className="text-xl font-bold text-primary-600 mb-4">${item.price.toFixed(2)}</p>
+                        <p className="text-xl font-bold text-primary-600 mb-4">Rs {item.price.toFixed(2)}</p>
                         
                         {cartQuantity > 0 && (
                           <div className="mb-4 p-3 bg-primary-50 rounded-lg">
