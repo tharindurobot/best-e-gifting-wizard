@@ -114,7 +114,10 @@ const SelectItems = () => {
                               className="w-full h-full object-cover rounded-lg"
                             />
                           </AspectRatio>
-                          <h3 className="text-lg font-semibold mb-2">{item.name}</h3>
+                          <div className="mb-2">
+                            <h3 className="text-lg font-semibold">{item.name}</h3>
+                            <p className="text-sm text-gray-500">Code: {item.itemCode}</p>
+                          </div>
                           <p className="text-xl font-bold text-primary-600 mb-4">Rs {item.price.toFixed(2)}</p>
                           
                           {cartQuantity > 0 && (

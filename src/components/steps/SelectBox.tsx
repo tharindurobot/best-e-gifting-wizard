@@ -5,6 +5,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { useOrder } from '@/context/OrderContext';
 import { DataService } from '@/services/dataService';
 import { Box } from '@/types';
+import PaperColorSelector from '@/components/PaperColorSelector';
 
 const SelectBox = () => {
   const { selectBox, setCurrentStep, order } = useOrder();
@@ -79,6 +80,8 @@ const SelectBox = () => {
           </Card>
         ))}
       </div>
+
+      <PaperColorSelector />
 
       {order.box && (
         <div className="flex justify-center animate-fade-in">

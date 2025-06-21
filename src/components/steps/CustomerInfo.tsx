@@ -7,6 +7,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { useOrder } from '@/context/OrderContext';
 import { useToast } from '@/hooks/use-toast';
+import { DataService } from '@/services/dataService';
 
 const CustomerInfo = () => {
   const { setCustomerInfo, order, getTotalPrice, resetOrder, setCurrentStep } = useOrder();
@@ -27,8 +28,20 @@ const CustomerInfo = () => {
 
   const generateOrderEmail = () => {
     const itemsList = order.items.map(item => 
-      `- ${item.item.name} (x${item.quantity}) - $${(item.item.price * item.quantity).toFixed(2)}`
+      `- ${item.item.name} (Code: ${item.item.itemCode}) (x${item.quantity}) - Rs ${(item.item.price * item.quantity).toFixed(2)}`
     ).join('\n');
+
+    const paperColors = DataService.getPaperColors();
+    const selectedColorNames = order.selectedPaperColors
+      .filter(colorId => colorId !== 'mix-colors')
+      .map(colorId => {
+        const color = paperColors.find(c => c.id === colorId);
+        return color ? color.name : colorId;
+      });
+    
+    const colorInfo = selectedColorNames.length > 0 
+      ? `Selected Paper Colors: ${selectedColorNames.join(', ')}${order.selectedPaperColors.includes('mix-colors') ? ' (Mix Colors)' : ''}`
+      : 'No paper colors selected';
 
     return `
 New Order from BEST E Gift Boxes
@@ -38,19 +51,21 @@ CUSTOMER INFORMATION:
 - Email: ${formData.email}
 - Phone: ${formData.phone}
 - Address: ${formData.address}
+${formData.comment ? `- Comment: ${formData.comment}` : ''}
 
 ORDER DETAILS:
-- Gift Box: ${order.box?.name} (${order.box?.color}) - $${order.box?.price.toFixed(2)}
+- Gift Box: ${order.box?.name} (${order.box?.color}) - Rs ${order.box?.price.toFixed(2)}
+${order.box?.paperFills ? `- ${colorInfo}` : ''}
 
 SELECTED ITEMS:
 ${itemsList}
 
-- Greeting Card: ${order.greetingCard?.name} - $${order.greetingCard?.price.toFixed(2)}
+- Greeting Card: ${order.greetingCard?.name} - Rs ${order.greetingCard?.price.toFixed(2)}
 
 PAYMENT METHOD: ${order.paymentMethod === 'cash' ? 'Cash on Delivery' : 'Bank Transfer'}
 ${order.receiptFile ? `Receipt File: ${order.receiptFile.name}` : ''}
 
-TOTAL AMOUNT: $${getTotalPrice().toFixed(2)}
+TOTAL AMOUNT: Rs ${getTotalPrice().toFixed(2)}
 
 Order placed on: ${new Date().toLocaleString()}
     `.trim();
@@ -72,7 +87,7 @@ Order placed on: ${new Date().toLocaleString()}
       // Simulate email sending
       const emailContent = generateOrderEmail();
       console.log('Order Email Content:', emailContent);
-      console.log('Sending to: tharindurobot@gmail.com');
+      console.log('Sending to: shop@example.com');
 
       // Simulate API call delay
       await new Promise(resolve => setTimeout(resolve, 2000));
@@ -157,6 +172,17 @@ Order placed on: ${new Date().toLocaleString()}
                   rows={4}
                 />
               </div>
+
+              <div>
+                <Label htmlFor="comment">Additional Comments (Optional)</Label>
+                <Textarea
+                  id="comment"
+                  value={formData.comment || ''}
+                  onChange={(e) => handleInputChange('comment', e.target.value)}
+                  placeholder="Any special instructions or comments for your order"
+                  rows={3}
+                />
+              </div>
             </div>
           </CardContent>
         </Card>
@@ -170,28 +196,28 @@ Order placed on: ${new Date().toLocaleString()}
               {order.box && (
                 <div className="flex justify-between">
                   <span>{order.box.name}</span>
-                  <span>${order.box.price.toFixed(2)}</span>
+                  <span>Rs {order.box.price.toFixed(2)}</span>
                 </div>
               )}
 
               {order.items.map((cartItem) => (
                 <div key={cartItem.item.id} className="flex justify-between text-sm">
-                  <span>{cartItem.item.name} (x{cartItem.quantity})</span>
-                  <span>${(cartItem.item.price * cartItem.quantity).toFixed(2)}</span>
+                  <span>{cartItem.item.name} ({cartItem.item.itemCode}) (x{cartItem.quantity})</span>
+                  <span>Rs {(cartItem.item.price * cartItem.quantity).toFixed(2)}</span>
                 </div>
               ))}
 
               {order.greetingCard && (
                 <div className="flex justify-between">
                   <span>{order.greetingCard.name}</span>
-                  <span>${order.greetingCard.price.toFixed(2)}</span>
+                  <span>Rs {order.greetingCard.price.toFixed(2)}</span>
                 </div>
               )}
 
               <div className="border-t pt-3">
                 <div className="flex justify-between text-lg font-bold">
                   <span>Total Amount</span>
-                  <span className="text-primary-600">${getTotalPrice().toFixed(2)}</span>
+                  <span className="text-primary-600">Rs {getTotalPrice().toFixed(2)}</span>
                 </div>
               </div>
 
@@ -202,6 +228,28 @@ Order placed on: ${new Date().toLocaleString()}
                   <p className="text-sm text-green-600 mt-1">Receipt uploaded: {order.receiptFile.name}</p>
                 )}
               </div>
+
+              {order.selectedPaperColors.length > 0 && (
+                <div className="bg-primary-50 p-3 rounded mt-4">
+                  <p className="text-sm font-medium text-primary-700">Paper Colors:</p>
+                  <div className="flex flex-wrap gap-1 mt-1">
+                    {order.selectedPaperColors
+                      .filter(colorId => colorId !== 'mix-colors')
+                      .map((colorId) => {
+                        const paperColors = DataService.getPaperColors();
+                        const color = paperColors.find(c => c.id === colorId);
+                        return color ? (
+                          <span key={colorId} className="text-xs bg-white px-2 py-1 rounded">
+                            {color.name}
+                          </span>
+                        ) : null;
+                      })}
+                    {order.selectedPaperColors.includes('mix-colors') && (
+                      <span className="text-xs bg-primary-100 px-2 py-1 rounded">Mix Colors</span>
+                    )}
+                  </div>
+                </div>
+              )}
             </div>
           </CardContent>
         </Card>

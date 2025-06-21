@@ -14,6 +14,7 @@ interface OrderContextType {
   setPaymentMethod: (method: 'cash' | 'bank') => void;
   setCustomerInfo: (info: Order['customerInfo']) => void;
   setReceiptFile: (file: File) => void;
+  setSelectedPaperColors: (colors: string[]) => void;
   getTotalPrice: () => number;
   resetOrder: () => void;
 }
@@ -24,12 +25,14 @@ const initialOrder: Order = {
   box: null,
   items: [],
   greetingCard: null,
+  selectedPaperColors: [],
   paymentMethod: 'cash',
   customerInfo: {
     fullName: '',
     address: '',
     email: '',
-    phone: ''
+    phone: '',
+    comment: ''
   },
   total: 0
 };
@@ -90,6 +93,10 @@ export const OrderProvider = ({ children }: { children: ReactNode }) => {
     setOrder(prev => ({ ...prev, receiptFile: file }));
   };
 
+  const setSelectedPaperColors = (colors: string[]) => {
+    setOrder(prev => ({ ...prev, selectedPaperColors: colors }));
+  };
+
   const getTotalPrice = () => {
     const boxPrice = order.box?.price || 0;
     const itemsPrice = order.items.reduce((total, cartItem) => 
@@ -117,6 +124,7 @@ export const OrderProvider = ({ children }: { children: ReactNode }) => {
       setPaymentMethod,
       setCustomerInfo,
       setReceiptFile,
+      setSelectedPaperColors,
       getTotalPrice,
       resetOrder
     }}>

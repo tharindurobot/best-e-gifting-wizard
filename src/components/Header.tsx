@@ -1,11 +1,17 @@
 
 import React from 'react';
 import { useOrder } from '@/context/OrderContext';
+import { MessageCircle } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 import Navigation from './Navigation';
 
 const Header = () => {
   const { getTotalPrice, order } = useOrder();
   const itemCount = order.items.reduce((total, item) => total + item.quantity, 0);
+
+  const handleWhatsAppClick = () => {
+    window.open('https://wa.me/94712345678', '_blank');
+  };
 
   return (
     <header className="bg-gradient-to-r from-primary-700 to-primary-900 text-white shadow-lg">
@@ -34,6 +40,15 @@ const Header = () => {
                 <p className="text-xl font-semibold">Rs {getTotalPrice().toFixed(2)}</p>
               </div>
             </div>
+            
+            <Button
+              onClick={handleWhatsAppClick}
+              className="bg-green-600 hover:bg-green-700 text-white p-2 rounded-full"
+              size="sm"
+            >
+              <MessageCircle className="w-5 h-5" />
+            </Button>
+            
             <Navigation />
           </div>
         </div>

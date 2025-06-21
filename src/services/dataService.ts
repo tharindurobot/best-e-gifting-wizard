@@ -1,11 +1,12 @@
 
-import { Box, Item, GreetingCard } from '@/types';
+import { Box, Item, GreetingCard, PaperColor, DEFAULT_PAPER_COLORS } from '@/types';
 import { mockBoxes, mockItems, mockGreetingCards } from '@/data/mockData';
 
 const STORAGE_KEYS = {
   BOXES: 'beste_boxes',
   ITEMS: 'beste_items',
-  CARDS: 'beste_cards'
+  CARDS: 'beste_cards',
+  PAPER_COLORS: 'beste_paper_colors'
 };
 
 export class DataService {
@@ -15,11 +16,29 @@ export class DataService {
       localStorage.setItem(STORAGE_KEYS.BOXES, JSON.stringify(mockBoxes));
     }
     if (!localStorage.getItem(STORAGE_KEYS.ITEMS)) {
-      localStorage.setItem(STORAGE_KEYS.ITEMS, JSON.stringify(mockItems));
+      // Add item codes to existing mock items
+      const itemsWithCodes = mockItems.map((item, index) => ({
+        ...item,
+        itemCode: `ITM-${String(index + 1).padStart(3, '0')}`
+      }));
+      localStorage.setItem(STORAGE_KEYS.ITEMS, JSON.stringify(itemsWithCodes));
     }
     if (!localStorage.getItem(STORAGE_KEYS.CARDS)) {
       localStorage.setItem(STORAGE_KEYS.CARDS, JSON.stringify(mockGreetingCards));
     }
+    if (!localStorage.getItem(STORAGE_KEYS.PAPER_COLORS)) {
+      localStorage.setItem(STORAGE_KEYS.PAPER_COLORS, JSON.stringify(DEFAULT_PAPER_COLORS));
+    }
+  }
+
+  // Generate next item code
+  static generateItemCode(): string {
+    const items = this.getItems();
+    const maxCode = items.reduce((max, item) => {
+      const codeNum = parseInt(item.itemCode.replace('ITM-', ''));
+      return codeNum > max ? codeNum : max;
+    }, 0);
+    return `ITM-${String(maxCode + 1).padStart(3, '0')}`;
   }
 
   // Boxes
@@ -53,5 +72,16 @@ export class DataService {
 
   static saveCards(cards: GreetingCard[]): void {
     localStorage.setItem(STORAGE_KEYS.CARDS, JSON.stringify(cards));
+  }
+
+  // Paper Colors
+  static getPaperColors(): PaperColor[] {
+    this.initializeStorage();
+    const colors = localStorage.getItem(STORAGE_KEYS.PAPER_COLORS);
+    return colors ? JSON.parse(colors) : DEFAULT_PAPER_COLORS;
+  }
+
+  static savePaperColors(colors: PaperColor[]): void {
+    localStorage.setItem(STORAGE_KEYS.PAPER_COLORS, JSON.stringify(colors));
   }
 }

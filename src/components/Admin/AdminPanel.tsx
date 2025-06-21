@@ -7,6 +7,7 @@ import { useAuth } from '@/context/AuthContext';
 import BoxManagement from './BoxManagement';
 import ItemManagement from './ItemManagement';
 import CardManagement from './CardManagement';
+import PaperColorManagement from './PaperColorManagement';
 
 const AdminPanel = () => {
   const { logout } = useAuth();
@@ -21,10 +22,11 @@ const AdminPanel = () => {
       </CardHeader>
       <CardContent>
         <Tabs defaultValue="boxes" className="w-full">
-          <TabsList className="grid w-full grid-cols-3">
+          <TabsList className="grid w-full grid-cols-4">
             <TabsTrigger value="boxes">Manage Boxes</TabsTrigger>
             <TabsTrigger value="items">Manage Items</TabsTrigger>
             <TabsTrigger value="cards">Manage Cards</TabsTrigger>
+            <TabsTrigger value="colors">Paper Colors</TabsTrigger>
           </TabsList>
 
           <TabsContent value="boxes">
@@ -37,6 +39,10 @@ const AdminPanel = () => {
 
           <TabsContent value="cards">
             <CardManagement />
+          </TabsContent>
+
+          <TabsContent value="colors">
+            <PaperColorManagement />
           </TabsContent>
         </Tabs>
       </CardContent>
