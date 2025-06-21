@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { OrderProvider, useOrder } from '@/context/OrderContext';
+import { useOrder } from '@/context/OrderContext';
 import Header from '@/components/Header';
 import ProgressBar from '@/components/ProgressBar';
 import SelectBox from '@/components/steps/SelectBox';
@@ -9,7 +9,7 @@ import SelectGreetingCard from '@/components/steps/SelectGreetingCard';
 import PaymentMethod from '@/components/steps/PaymentMethod';
 import CustomerInfo from '@/components/steps/CustomerInfo';
 
-const OrderFlow = () => {
+const Home = () => {
   const { currentStep } = useOrder();
 
   const renderStep = () => {
@@ -38,14 +38,6 @@ const OrderFlow = () => {
         {renderStep()}
       </main>
     </div>
-  );
-};
-
-const Home = () => {
-  return (
-    <OrderProvider>
-      <OrderFlow />
-    </OrderProvider>
   );
 };
 
