@@ -63,16 +63,16 @@ const Contact = () => {
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div>
-                    <h3 className="font-semibold text-primary-700">Address</h3>
-                    <p className="text-gray-600">123 Gift Street, Premium City, PC 12345</p>
+                    <h3 className="font-semibold text-primary-700">📧 Email</h3>
+                    <p className="text-gray-600">info@giftstore.com</p>
                   </div>
                   <div>
-                    <h3 className="font-semibold text-primary-700">Phone</h3>
-                    <p className="text-gray-600">+1 (555) 123-4567</p>
+                    <h3 className="font-semibold text-primary-700">📞 Phone</h3>
+                    <p className="text-gray-600">+94 712 345 678</p>
                   </div>
                   <div>
-                    <h3 className="font-semibold text-primary-700">Email</h3>
-                    <p className="text-gray-600">info@beste.com</p>
+                    <h3 className="font-semibold text-primary-700">📍 Address</h3>
+                    <p className="text-gray-600">No. 123, Main Street, Colombo, Sri Lanka</p>
                   </div>
                   <div>
                     <h3 className="font-semibold text-primary-700">Business Hours</h3>

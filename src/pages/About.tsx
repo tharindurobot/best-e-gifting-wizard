@@ -8,17 +8,17 @@ const About = () => {
       <Header />
       <main className="container mx-auto px-4 py-12">
         <div className="max-w-4xl mx-auto">
-          <h1 className="text-4xl font-bold text-gray-900 mb-8 text-center">About BEST E</h1>
+          <h1 className="text-4xl font-bold text-gray-900 mb-8 text-center">About Us</h1>
           
           <div className="bg-white rounded-lg shadow-lg p-8 mb-8">
             <h2 className="text-2xl font-semibold text-primary-700 mb-4">Our Story</h2>
             <p className="text-gray-600 leading-relaxed mb-6">
-              BEST E is your premier destination for creating personalized gift boxes that make every occasion special. 
-              We believe that the perfect gift tells a story, expresses love, and creates lasting memories.
+              We are a curated gift store offering beautiful items for every occasion – from stationery to perfumes, 
+              chocolates to baby care. Our mission is to make gifting more thoughtful and personalized.
             </p>
             <p className="text-gray-600 leading-relaxed mb-6">
               Founded with the vision of making gift-giving more meaningful and personal, we curate the finest 
-              selection of chocolates, toys, and accessories to create unique gift experiences.
+              selection of items across multiple categories to create unique gift experiences for every special moment.
             </p>
           </div>
 
@@ -27,11 +27,11 @@ const About = () => {
             <div className="grid md:grid-cols-3 gap-6">
               <div className="text-center">
                 <h3 className="text-lg font-semibold mb-2">Premium Gift Boxes</h3>
-                <p className="text-gray-600">Carefully crafted boxes in various colors and styles</p>
+                <p className="text-gray-600">Carefully crafted boxes with free paper fills option</p>
               </div>
               <div className="text-center">
-                <h3 className="text-lg font-semibold mb-2">Curated Items</h3>
-                <p className="text-gray-600">Hand-selected chocolates, toys, and accessories</p>
+                <h3 className="text-lg font-semibold mb-2">Curated Categories</h3>
+                <p className="text-gray-600">Stationary, perfumes, cosmetics, accessories, and more</p>
               </div>
               <div className="text-center">
                 <h3 className="text-lg font-semibold mb-2">Personal Touch</h3>

@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -6,7 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { AspectRatio } from '@/components/ui/aspect-ratio';
 import { DataService } from '@/services/dataService';
-import { Item } from '@/types';
+import { Item, ITEM_CATEGORIES } from '@/types';
 
 const ItemManagement = () => {
   const [items, setItems] = useState<Item[]>([]);
@@ -17,8 +18,6 @@ const ItemManagement = () => {
     price: 0,
     image: ''
   });
-
-  const categories = ['Chocolates', 'Toys', 'Accessories'];
 
   useEffect(() => {
     loadItems();
@@ -108,7 +107,7 @@ const ItemManagement = () => {
                   <SelectValue placeholder="Select category" />
                 </SelectTrigger>
                 <SelectContent>
-                  {categories.map((category) => (
+                  {ITEM_CATEGORIES.map((category) => (
                     <SelectItem key={category} value={category}>
                       {category}
                     </SelectItem>
@@ -133,7 +132,7 @@ const ItemManagement = () => {
                 id="image"
                 value={formData.image}
                 onChange={(e) => setFormData({ ...formData, image: e.target.value })}
-                placeholder="Enter image URL"
+                placeholder="Enter image URL (1:1 ratio recommended)"
               />
             </div>
           </div>
@@ -150,8 +149,8 @@ const ItemManagement = () => {
         </CardContent>
       </Card>
 
-      <div className="space-y-4">
-        {categories.map((category) => (
+      <div className="space-y-6">
+        {ITEM_CATEGORIES.map((category) => (
           <div key={category}>
             <h3 className="text-lg font-semibold mb-3">{category}</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -182,6 +181,9 @@ const ItemManagement = () => {
                   </Card>
                 ))}
             </div>
+            {items.filter(item => item.category === category).length === 0 && (
+              <p className="text-gray-500 text-center py-8">No items in this category yet.</p>
+            )}
           </div>
         ))}
       </div>

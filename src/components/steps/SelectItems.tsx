@@ -7,14 +7,12 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { AspectRatio } from '@/components/ui/aspect-ratio';
 import { useOrder } from '@/context/OrderContext';
 import { DataService } from '@/services/dataService';
-import { Item } from '@/types';
+import { Item, ITEM_CATEGORIES } from '@/types';
 
 const SelectItems = () => {
   const { addItem, updateItemQuantity, removeItem, setCurrentStep, order } = useOrder();
   const [quantities, setQuantities] = useState<{ [key: string]: number }>({});
   const [items, setItems] = useState<Item[]>([]);
-
-  const categories = ['Chocolates', 'Toys', 'Accessories'];
 
   useEffect(() => {
     loadItems();
@@ -65,6 +63,11 @@ const SelectItems = () => {
     setCurrentStep('box');
   };
 
+  // Filter categories that have items
+  const categoriesWithItems = ITEM_CATEGORIES.filter(category => 
+    items.some(item => item.category === category)
+  );
+
   return (
     <div className="space-y-6">
       <div className="text-center">
@@ -72,89 +75,107 @@ const SelectItems = () => {
         <p className="text-gray-600">Add items to your gift box from our curated selection</p>
       </div>
 
-      <Tabs defaultValue="Chocolates" className="w-full">
-        <TabsList className="grid w-full grid-cols-3">
-          {categories.map((category) => (
-            <TabsTrigger key={category} value={category}>{category}</TabsTrigger>
-          ))}
-        </TabsList>
+      {categoriesWithItems.length > 0 ? (
+        <Tabs defaultValue={categoriesWithItems[0]} className="w-full">
+          <TabsList className="grid w-full grid-cols-2 md:grid-cols-3 lg:grid-cols-5">
+            {categoriesWithItems.slice(0, 5).map((category) => (
+              <TabsTrigger key={category} value={category} className="text-xs">
+                {category}
+              </TabsTrigger>
+            ))}
+          </TabsList>
 
-        {categories.map((category) => (
-          <TabsContent key={category} value={category} className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {items
-                .filter(item => item.category === category)
-                .map((item) => {
-                  const cartQuantity = getItemQuantityInCart(item.id);
-                  const inputQuantity = quantities[item.id] || 1;
-                  
-                  return (
-                    <Card key={item.id} className="hover:shadow-lg transition-shadow">
-                      <CardContent className="p-6">
-                        <AspectRatio ratio={1} className="mb-4">
-                          <img
-                            src={item.image}
-                            alt={item.name}
-                            className="w-full h-full object-cover rounded-lg"
-                          />
-                        </AspectRatio>
-                        <h3 className="text-lg font-semibold mb-2">{item.name}</h3>
-                        <p className="text-xl font-bold text-primary-600 mb-4">Rs {item.price.toFixed(2)}</p>
-                        
-                        {cartQuantity > 0 && (
-                          <div className="mb-4 p-3 bg-primary-50 rounded-lg">
-                            <p className="text-sm text-primary-700">In cart: {cartQuantity}</p>
-                            <div className="flex gap-2 mt-2">
-                              <Button
-                                size="sm"
-                                variant="outline"
-                                onClick={() => updateItemQuantity(item.id, cartQuantity - 1)}
-                              >
-                                -
-                              </Button>
-                              <Button
-                                size="sm"
-                                variant="outline"
-                                onClick={() => updateItemQuantity(item.id, cartQuantity + 1)}
-                              >
-                                +
-                              </Button>
-                              <Button
-                                size="sm"
-                                variant="destructive"
-                                onClick={() => removeItem(item.id)}
-                              >
-                                Remove
-                              </Button>
+          {categoriesWithItems.slice(5).length > 0 && (
+            <TabsList className="grid w-full grid-cols-2 md:grid-cols-3 lg:grid-cols-5 mt-2">
+              {categoriesWithItems.slice(5).map((category) => (
+                <TabsTrigger key={category} value={category} className="text-xs">
+                  {category}
+                </TabsTrigger>
+              ))}
+            </TabsList>
+          )}
+
+          {categoriesWithItems.map((category) => (
+            <TabsContent key={category} value={category} className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                {items
+                  .filter(item => item.category === category)
+                  .map((item) => {
+                    const cartQuantity = getItemQuantityInCart(item.id);
+                    const inputQuantity = quantities[item.id] || 1;
+                    
+                    return (
+                      <Card key={item.id} className="hover:shadow-lg transition-shadow">
+                        <CardContent className="p-6">
+                          <AspectRatio ratio={1} className="mb-4">
+                            <img
+                              src={item.image}
+                              alt={item.name}
+                              className="w-full h-full object-cover rounded-lg"
+                            />
+                          </AspectRatio>
+                          <h3 className="text-lg font-semibold mb-2">{item.name}</h3>
+                          <p className="text-xl font-bold text-primary-600 mb-4">Rs {item.price.toFixed(2)}</p>
+                          
+                          {cartQuantity > 0 && (
+                            <div className="mb-4 p-3 bg-primary-50 rounded-lg">
+                              <p className="text-sm text-primary-700">In cart: {cartQuantity}</p>
+                              <div className="flex gap-2 mt-2">
+                                <Button
+                                  size="sm"
+                                  variant="outline"
+                                  onClick={() => updateItemQuantity(item.id, cartQuantity - 1)}
+                                >
+                                  -
+                                </Button>
+                                <Button
+                                  size="sm"
+                                  variant="outline"
+                                  onClick={() => updateItemQuantity(item.id, cartQuantity + 1)}
+                                >
+                                  +
+                                </Button>
+                                <Button
+                                  size="sm"
+                                  variant="destructive"
+                                  onClick={() => removeItem(item.id)}
+                                >
+                                  Remove
+                                </Button>
+                              </div>
                             </div>
+                          )}
+
+                          <div className="flex items-center gap-2 mb-3">
+                            <Input
+                              type="number"
+                              min="1"
+                              value={inputQuantity}
+                              onChange={(e) => handleQuantityChange(item.id, parseInt(e.target.value) || 1)}
+                              className="w-20"
+                            />
+                            <span className="text-sm text-gray-600">qty</span>
                           </div>
-                        )}
 
-                        <div className="flex items-center gap-2 mb-3">
-                          <Input
-                            type="number"
-                            min="1"
-                            value={inputQuantity}
-                            onChange={(e) => handleQuantityChange(item.id, parseInt(e.target.value) || 1)}
-                            className="w-20"
-                          />
-                          <span className="text-sm text-gray-600">qty</span>
-                        </div>
-
-                        <Button
-                          onClick={() => handleAddItem(item)}
-                          className="w-full"
-                        >
-                          Add to Box
-                        </Button>
-                      </CardContent>
-                    </Card>
-                  );
-                })}
-            </div>
-          </TabsContent>
-        ))}
-      </Tabs>
+                          <Button
+                            onClick={() => handleAddItem(item)}
+                            className="w-full"
+                          >
+                            Add to Box
+                          </Button>
+                        </CardContent>
+                      </Card>
+                    );
+                  })}
+              </div>
+            </TabsContent>
+          ))}
+        </Tabs>
+      ) : (
+        <div className="text-center py-12">
+          <p className="text-gray-500 text-lg">No items available yet. Please check back later!</p>
+        </div>
+      )}
 
       <div className="flex justify-between">
         <Button onClick={handleBack} variant="outline">

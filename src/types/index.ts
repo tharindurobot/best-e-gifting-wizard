@@ -5,6 +5,7 @@ export interface Box {
   color: string;
   price: number;
   image: string;
+  paperFills?: boolean;
 }
 
 export interface Item {
@@ -43,3 +44,16 @@ export interface Order {
 }
 
 export type OrderStep = 'box' | 'items' | 'card' | 'payment' | 'info';
+
+export const ITEM_CATEGORIES = [
+  'Stationary',
+  'Flowers', 
+  'Soft Toys',
+  'Women Accessories',
+  'Chocolate',
+  'Perfume (Men)',
+  'Perfume (Women)',
+  'Men\'s Accessories',
+  'Baby Care',
+  'Women Cosmetics'
+] as const;

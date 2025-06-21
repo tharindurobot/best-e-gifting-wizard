@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Checkbox } from '@/components/ui/checkbox';
 import { DataService } from '@/services/dataService';
 import { Box } from '@/types';
 
@@ -14,7 +15,8 @@ const BoxManagement = () => {
     name: '',
     color: '',
     price: 0,
-    image: ''
+    image: '',
+    paperFills: false
   });
 
   useEffect(() => {
@@ -26,13 +28,18 @@ const BoxManagement = () => {
     setBoxes(storedBoxes);
   };
 
+  const notifyDataUpdate = () => {
+    window.dispatchEvent(new CustomEvent('adminDataUpdate'));
+  };
+
   const handleEdit = (box: Box) => {
     setEditingBox(box);
     setFormData({
       name: box.name,
       color: box.color,
       price: box.price,
-      image: box.image
+      image: box.image,
+      paperFills: box.paperFills || false
     });
   };
 
@@ -55,20 +62,22 @@ const BoxManagement = () => {
     
     setBoxes(updatedBoxes);
     DataService.saveBoxes(updatedBoxes);
+    notifyDataUpdate();
     
     setEditingBox(null);
-    setFormData({ name: '', color: '', price: 0, image: '' });
+    setFormData({ name: '', color: '', price: 0, image: '', paperFills: false });
   };
 
   const handleDelete = (id: string) => {
     const updatedBoxes = boxes.filter(box => box.id !== id);
     setBoxes(updatedBoxes);
     DataService.saveBoxes(updatedBoxes);
+    notifyDataUpdate();
   };
 
   const handleCancel = () => {
     setEditingBox(null);
-    setFormData({ name: '', color: '', price: 0, image: '' });
+    setFormData({ name: '', color: '', price: 0, image: '', paperFills: false });
   };
 
   return (
@@ -118,6 +127,14 @@ const BoxManagement = () => {
               />
             </div>
           </div>
+          <div className="flex items-center space-x-2">
+            <Checkbox
+              id="paperFills"
+              checked={formData.paperFills}
+              onCheckedChange={(checked) => setFormData({ ...formData, paperFills: !!checked })}
+            />
+            <Label htmlFor="paperFills">Include Free Paper Fills</Label>
+          </div>
           <div className="flex gap-2">
             <Button onClick={handleSave}>
               {editingBox ? 'Update Box' : 'Add Box'}
@@ -142,6 +159,9 @@ const BoxManagement = () => {
               />
               <h3 className="font-semibold">{box.name}</h3>
               <p className="text-sm text-gray-600">Color: {box.color}</p>
+              {box.paperFills && (
+                <p className="text-sm text-green-600">✓ Free Paper Fills Included</p>
+              )}
               <p className="text-lg font-bold text-primary-600">Rs {box.price.toFixed(2)}</p>
               <div className="flex gap-2 mt-3">
                 <Button size="sm" onClick={() => handleEdit(box)}>

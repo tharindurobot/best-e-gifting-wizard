@@ -64,6 +64,9 @@ const SelectBox = () => {
               />
               <h3 className="text-xl font-semibold mb-2">{box.name}</h3>
               <p className="text-gray-600 mb-2">Color: {box.color}</p>
+              {box.paperFills && (
+                <p className="text-green-600 text-sm mb-2">✓ Free Paper Fills Included</p>
+              )}
               <p className="text-2xl font-bold text-primary-600 mb-4">Rs {box.price.toFixed(2)}</p>
               <Button
                 onClick={() => handleSelectBox(box)}
