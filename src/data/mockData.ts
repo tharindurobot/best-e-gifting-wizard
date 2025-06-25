@@ -1,5 +1,4 @@
-
-import { Box, Item, GreetingCard } from '@/types';
+import { Box, Item, GreetingCard, BoxFill } from '@/types';
 
 export const mockBoxes: Box[] = [
   {
@@ -129,5 +128,36 @@ export const mockGreetingCards: GreetingCard[] = [
     name: 'Congratulations Card',
     price: 180.00,
     image: 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=400&fit=crop'
+  }
+];
+
+export const mockBoxFills: BoxFill[] = [
+  {
+    id: '1',
+    name: 'Shredded Paper',
+    image: 'https://images.unsplash.com/photo-1486718448742-163732cd1544?w=400&h=400&fit=crop',
+    isFree: true,
+    isVisible: true
+  },
+  {
+    id: '2',
+    name: 'Tissue Paper',
+    image: 'https://images.unsplash.com/photo-1465146344425-f00d5f5c8f07?w=400&h=400&fit=crop',
+    isFree: true,
+    isVisible: true
+  },
+  {
+    id: '3',
+    name: 'Fabric Stuffing',
+    image: 'https://images.unsplash.com/photo-1582562124811-c09040d0a901?w=400&h=400&fit=crop',
+    isFree: true,
+    isVisible: true
+  },
+  {
+    id: '4',
+    name: 'Decorative Grass',
+    image: 'https://images.unsplash.com/photo-1482881497185-d4a9ddbe4151?w=400&h=400&fit=crop',
+    isFree: true,
+    isVisible: true
   }
 ];

@@ -3,6 +3,7 @@ import React from 'react';
 import { useOrder } from '@/context/OrderContext';
 import { MessageCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Link } from 'react-router-dom';
 import Navigation from './Navigation';
 
 const Header = () => {
@@ -17,7 +18,7 @@ const Header = () => {
     <header className="bg-gradient-to-r from-primary-700 to-primary-900 text-white shadow-lg">
       <div className="container mx-auto px-4 py-6">
         <div className="flex justify-between items-center">
-          <div className="flex items-center space-x-3">
+          <Link to="/" className="flex items-center space-x-3 hover:opacity-80 transition-opacity">
             <img 
               src="/lovable-uploads/5430729f-f06f-43cf-b98f-83a68ac00d9f.png" 
               alt="BEST E Logo" 
@@ -27,7 +28,7 @@ const Header = () => {
               <h1 className="text-3xl font-bold tracking-wider">BEST E</h1>
               <p className="text-primary-100 text-sm">Premium Gift Box Experience</p>
             </div>
-          </div>
+          </Link>
           
           <div className="flex items-center space-x-6">
             <div className="hidden sm:flex items-center space-x-6">

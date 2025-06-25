@@ -1,4 +1,3 @@
-
 export interface Box {
   id: string;
   name: string;
@@ -24,6 +23,14 @@ export interface GreetingCard {
   image: string;
 }
 
+export interface BoxFill {
+  id: string;
+  name: string;
+  image: string;
+  isFree: boolean;
+  isVisible: boolean;
+}
+
 export interface CartItem {
   item: Item;
   quantity: number;
@@ -40,6 +47,7 @@ export interface Order {
   items: CartItem[];
   greetingCard: GreetingCard | null;
   selectedPaperColors: string[];
+  selectedBoxFills: string[];
   paymentMethod: 'cash' | 'bank';
   customerInfo: {
     fullName: string;
@@ -52,7 +60,7 @@ export interface Order {
   total: number;
 }
 
-export type OrderStep = 'box' | 'items' | 'card' | 'payment' | 'info';
+export type OrderStep = 'box' | 'items' | 'fills' | 'card' | 'payment' | 'info';
 
 export const ITEM_CATEGORIES = [
   'Stationary',

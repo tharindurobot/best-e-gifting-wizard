@@ -8,6 +8,7 @@ import BoxManagement from './BoxManagement';
 import ItemManagement from './ItemManagement';
 import CardManagement from './CardManagement';
 import PaperColorManagement from './PaperColorManagement';
+import BoxFillManagement from './BoxFillManagement';
 
 const AdminPanel = () => {
   const { logout } = useAuth();
@@ -22,9 +23,10 @@ const AdminPanel = () => {
       </CardHeader>
       <CardContent>
         <Tabs defaultValue="boxes" className="w-full">
-          <TabsList className="grid w-full grid-cols-4">
+          <TabsList className="grid w-full grid-cols-5">
             <TabsTrigger value="boxes">Manage Boxes</TabsTrigger>
             <TabsTrigger value="items">Manage Items</TabsTrigger>
+            <TabsTrigger value="fills">Box Fills</TabsTrigger>
             <TabsTrigger value="cards">Manage Cards</TabsTrigger>
             <TabsTrigger value="colors">Paper Colors</TabsTrigger>
           </TabsList>
@@ -35,6 +37,10 @@ const AdminPanel = () => {
 
           <TabsContent value="items">
             <ItemManagement />
+          </TabsContent>
+
+          <TabsContent value="fills">
+            <BoxFillManagement />
           </TabsContent>
 
           <TabsContent value="cards">

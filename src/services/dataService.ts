@@ -1,12 +1,12 @@
-
-import { Box, Item, GreetingCard, PaperColor, DEFAULT_PAPER_COLORS } from '@/types';
-import { mockBoxes, mockItems, mockGreetingCards } from '@/data/mockData';
+import { Box, Item, GreetingCard, PaperColor, DEFAULT_PAPER_COLORS, BoxFill } from '@/types';
+import { mockBoxes, mockItems, mockGreetingCards, mockBoxFills } from '@/data/mockData';
 
 const STORAGE_KEYS = {
   BOXES: 'beste_boxes',
   ITEMS: 'beste_items',
   CARDS: 'beste_cards',
-  PAPER_COLORS: 'beste_paper_colors'
+  PAPER_COLORS: 'beste_paper_colors',
+  BOX_FILLS: 'beste_box_fills'
 };
 
 export class DataService {
@@ -28,6 +28,9 @@ export class DataService {
     }
     if (!localStorage.getItem(STORAGE_KEYS.PAPER_COLORS)) {
       localStorage.setItem(STORAGE_KEYS.PAPER_COLORS, JSON.stringify(DEFAULT_PAPER_COLORS));
+    }
+    if (!localStorage.getItem(STORAGE_KEYS.BOX_FILLS)) {
+      localStorage.setItem(STORAGE_KEYS.BOX_FILLS, JSON.stringify(mockBoxFills));
     }
   }
 
@@ -83,5 +86,16 @@ export class DataService {
 
   static savePaperColors(colors: PaperColor[]): void {
     localStorage.setItem(STORAGE_KEYS.PAPER_COLORS, JSON.stringify(colors));
+  }
+
+  // Box Fills
+  static getBoxFills(): BoxFill[] {
+    this.initializeStorage();
+    const fills = localStorage.getItem(STORAGE_KEYS.BOX_FILLS);
+    return fills ? JSON.parse(fills) : mockBoxFills;
+  }
+
+  static saveBoxFills(fills: BoxFill[]): void {
+    localStorage.setItem(STORAGE_KEYS.BOX_FILLS, JSON.stringify(fills));
   }
 }

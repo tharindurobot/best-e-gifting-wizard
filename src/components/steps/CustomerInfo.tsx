@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -43,6 +42,16 @@ const CustomerInfo = () => {
       ? `Selected Paper Colors: ${selectedColorNames.join(', ')}${order.selectedPaperColors.includes('mix-colors') ? ' (Mix Colors)' : ''}`
       : 'No paper colors selected';
 
+    const boxFills = DataService.getBoxFills();
+    const selectedFillNames = order.selectedBoxFills.map(fillId => {
+      const fill = boxFills.find(f => f.id === fillId);
+      return fill ? fill.name : fillId;
+    });
+    
+    const fillInfo = selectedFillNames.length > 0 
+      ? `Selected Box Fills: ${selectedFillNames.join(', ')}`
+      : 'No box fills selected';
+
     return `
 New Order from BEST E Gift Boxes
 
@@ -56,6 +65,7 @@ ${formData.comment ? `- Comment: ${formData.comment}` : ''}
 ORDER DETAILS:
 - Gift Box: ${order.box?.name} (${order.box?.color}) - Rs ${order.box?.price.toFixed(2)}
 ${order.box?.paperFills ? `- ${colorInfo}` : ''}
+- ${fillInfo}
 
 SELECTED ITEMS:
 ${itemsList}
@@ -211,6 +221,23 @@ Order placed on: ${new Date().toLocaleString()}
                 <div className="flex justify-between">
                   <span>{order.greetingCard.name}</span>
                   <span>Rs {order.greetingCard.price.toFixed(2)}</span>
+                </div>
+              )}
+
+              {order.selectedBoxFills.length > 0 && (
+                <div className="bg-green-50 p-3 rounded mt-4">
+                  <p className="text-sm font-medium text-green-700">Selected Box Fills (FREE):</p>
+                  <div className="flex flex-wrap gap-1 mt-1">
+                    {order.selectedBoxFills.map((fillId) => {
+                      const boxFills = DataService.getBoxFills();
+                      const fill = boxFills.find(f => f.id === fillId);
+                      return fill ? (
+                        <span key={fillId} className="text-xs bg-green-100 px-2 py-1 rounded">
+                          {fill.name}
+                        </span>
+                      ) : null;
+                    })}
+                  </div>
                 </div>
               )}
 

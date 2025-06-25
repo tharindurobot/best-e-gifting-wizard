@@ -5,6 +5,7 @@ import Header from '@/components/Header';
 import ProgressBar from '@/components/ProgressBar';
 import SelectBox from '@/components/steps/SelectBox';
 import SelectItems from '@/components/steps/SelectItems';
+import SelectBoxFills from '@/components/steps/SelectBoxFills';
 import SelectGreetingCard from '@/components/steps/SelectGreetingCard';
 import PaymentMethod from '@/components/steps/PaymentMethod';
 import CustomerInfo from '@/components/steps/CustomerInfo';
@@ -18,6 +19,8 @@ const Home = () => {
         return <SelectBox />;
       case 'items':
         return <SelectItems />;
+      case 'fills':
+        return <SelectBoxFills />;
       case 'card':
         return <SelectGreetingCard />;
       case 'payment':

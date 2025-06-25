@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 import { Order, Box, Item, GreetingCard, CartItem, OrderStep } from '@/types';
 
@@ -15,6 +14,7 @@ interface OrderContextType {
   setCustomerInfo: (info: Order['customerInfo']) => void;
   setReceiptFile: (file: File) => void;
   setSelectedPaperColors: (colors: string[]) => void;
+  setSelectedBoxFills: (fills: string[]) => void;
   getTotalPrice: () => number;
   resetOrder: () => void;
 }
@@ -26,6 +26,7 @@ const initialOrder: Order = {
   items: [],
   greetingCard: null,
   selectedPaperColors: [],
+  selectedBoxFills: [],
   paymentMethod: 'cash',
   customerInfo: {
     fullName: '',
@@ -97,6 +98,10 @@ export const OrderProvider = ({ children }: { children: ReactNode }) => {
     setOrder(prev => ({ ...prev, selectedPaperColors: colors }));
   };
 
+  const setSelectedBoxFills = (fills: string[]) => {
+    setOrder(prev => ({ ...prev, selectedBoxFills: fills }));
+  };
+
   const getTotalPrice = () => {
     const boxPrice = order.box?.price || 0;
     const itemsPrice = order.items.reduce((total, cartItem) => 
@@ -125,6 +130,7 @@ export const OrderProvider = ({ children }: { children: ReactNode }) => {
       setCustomerInfo,
       setReceiptFile,
       setSelectedPaperColors,
+      setSelectedBoxFills,
       getTotalPrice,
       resetOrder
     }}>

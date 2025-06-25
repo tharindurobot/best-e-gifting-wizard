@@ -56,7 +56,7 @@ const SelectItems = () => {
   };
 
   const handleNext = () => {
-    setCurrentStep('card');
+    setCurrentStep('fills');
   };
 
   const handleBack = () => {
@@ -105,7 +105,13 @@ const SelectItems = () => {
                     const inputQuantity = quantities[item.id] || 1;
                     
                     return (
-                      <Card key={item.id} className="hover:shadow-lg transition-shadow">
+                      <Card 
+                        key={item.id} 
+                        className="hover:shadow-lg transition-shadow relative overflow-hidden"
+                        style={{
+                          backgroundImage: `linear-gradient(135deg, rgba(148, 88, 15, 0.05) 0%, transparent 100%), url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%2394580f' fill-opacity='0.08'%3E%3Cpath d='m0 18 9-9h2v2l-9 9z'/%3E%3Cpath d='m10 10 9-9h2v2l-9 9z'/%3E%3C/g%3E%3C/svg%3E")`
+                        }}
+                      >
                         <CardContent className="p-6">
                           <AspectRatio ratio={1} className="mb-4">
                             <img
@@ -185,7 +191,7 @@ const SelectItems = () => {
           Back: Select Box
         </Button>
         <Button onClick={handleNext}>
-          Next: Choose Greeting Card
+          Next: Choose Box Fills
         </Button>
       </div>
     </div>
