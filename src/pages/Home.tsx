@@ -33,11 +33,17 @@ const Home = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100">
       <Header />
       
-      <main className="container mx-auto px-4 pt-4 pb-28">
-        {renderStep()}
+      <main className="container mx-auto px-4 pt-6 pb-32">
+        <div className="max-w-4xl mx-auto">
+          <div className="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden">
+            <div className="p-6">
+              {renderStep()}
+            </div>
+          </div>
+        </div>
       </main>
 
       <NavigationFooter />

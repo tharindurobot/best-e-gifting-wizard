@@ -15,39 +15,41 @@ const Header = () => {
   };
 
   return (
-    <header className="bg-gradient-to-r from-primary-700 to-primary-900 text-white shadow-lg sticky top-0 z-40">
+    <header className="bg-gradient-to-r from-primary-600 via-primary-700 to-primary-800 text-white shadow-xl sticky top-0 z-40 border-b border-primary-500">
       <div className="container mx-auto px-4 py-3">
         <div className="flex justify-between items-center">
-          <Link to="/" className="flex items-center space-x-2 hover:opacity-80 transition-opacity">
-            <img 
-              src="/lovable-uploads/5430729f-f06f-43cf-b98f-83a68ac00d9f.png" 
-              alt="BEST E Logo" 
-              className="w-8 h-8 rounded-full object-cover"
-            />
+          <Link to="/" className="flex items-center space-x-3 hover:opacity-90 transition-opacity duration-200">
+            <div className="relative">
+              <img 
+                src="/lovable-uploads/5430729f-f06f-43cf-b98f-83a68ac00d9f.png" 
+                alt="BEST E Logo" 
+                className="w-10 h-10 rounded-full object-cover shadow-lg border-2 border-primary-400"
+              />
+            </div>
             <div>
-              <h1 className="text-xl font-bold tracking-wider">BEST E</h1>
-              <p className="text-primary-100 text-xs">Premium Gift Box Experience</p>
+              <h1 className="text-xl font-bold tracking-wide">BEST E</h1>
+              <p className="text-primary-100 text-xs font-medium">Premium Gift Experience</p>
             </div>
           </Link>
           
           <div className="flex items-center space-x-4">
-            <div className="hidden sm:flex items-center space-x-4">
-              <div className="text-right">
-                <p className="text-xs text-primary-100">Items in Cart</p>
-                <p className="text-lg font-semibold">{itemCount}</p>
+            <div className="hidden sm:flex items-center space-x-6">
+              <div className="text-right bg-primary-800/30 px-3 py-2 rounded-lg border border-primary-500">
+                <p className="text-xs text-primary-100 font-medium">Items</p>
+                <p className="text-lg font-bold">{itemCount}</p>
               </div>
-              <div className="text-right">
-                <p className="text-xs text-primary-100">Total</p>
-                <p className="text-lg font-semibold">Rs {getTotalPrice().toFixed(2)}</p>
+              <div className="text-right bg-primary-800/30 px-3 py-2 rounded-lg border border-primary-500">
+                <p className="text-xs text-primary-100 font-medium">Total</p>
+                <p className="text-lg font-bold">Rs {getTotalPrice().toFixed(2)}</p>
               </div>
             </div>
             
             <Button
               onClick={handleWhatsAppClick}
-              className="bg-green-600 hover:bg-green-700 text-white p-1.5 rounded-full"
+              className="bg-green-600 hover:bg-green-700 text-white p-2 rounded-full shadow-lg transition-all duration-200 hover:scale-105"
               size="sm"
             >
-              <MessageCircle className="w-4 h-4" />
+              <MessageCircle className="w-5 h-5" />
             </Button>
             
             <Navigation />
@@ -55,7 +57,7 @@ const Header = () => {
         </div>
         
         {/* Mobile cart info */}
-        <div className="sm:hidden mt-2 flex justify-between text-xs">
+        <div className="sm:hidden mt-3 flex justify-between text-sm bg-primary-800/30 px-3 py-2 rounded-lg border border-primary-500">
           <div>
             <span className="text-primary-100">Items: </span>
             <span className="font-semibold">{itemCount}</span>
