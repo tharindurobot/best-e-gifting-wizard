@@ -30,18 +30,6 @@ const NavigationFooter = () => {
     }
   };
 
-  const getStepLabel = (step: OrderStep) => {
-    const labels = {
-      'box': 'Choose Gift Box',
-      'items': 'Choose Items',
-      'fills': 'Choose Fills',
-      'card': 'Choose Greeting Card',
-      'payment': 'Enter Customer Info',
-      'info': 'Review & Confirm'
-    };
-    return labels[step];
-  };
-
   const stepLabels = [
     'Choose Gift Box',
     'Choose Items', 
@@ -53,26 +41,29 @@ const NavigationFooter = () => {
 
   return (
     <div className="fixed bottom-0 left-0 right-0 bg-primary-600 text-white shadow-lg z-50">
-      <div className="container mx-auto px-4 py-4">
+      <div className="container mx-auto px-4 py-2.5">
         {/* Step Navigation */}
-        <div className="flex items-center justify-center mb-4 overflow-x-auto">
-          <div className="flex items-center space-x-2 sm:space-x-4 min-w-max">
+        <div className="flex items-center justify-center mb-2.5 overflow-x-auto">
+          <div className="flex items-center space-x-1 text-sm">
             {steps.map((step, index) => (
-              <div key={step} className="flex items-center">
+              <span key={step} className="flex items-center">
                 {index === currentStepIndex ? (
-                  <span className="text-white font-bold text-sm sm:text-base px-2 py-1 bg-primary-800 rounded">
-                    {stepLabels[index]}
+                  <span className="font-bold text-white px-1 py-0.5 bg-primary-800 rounded border-2 border-white">
+                    [{index + 1}]
                   </span>
                 ) : (
-                  <span className="text-primary-200 font-medium text-sm sm:text-base w-6 h-6 flex items-center justify-center">
+                  <span className="text-primary-200 font-medium">
                     {index + 1}
                   </span>
                 )}
                 {index < steps.length - 1 && (
-                  <div className="w-4 sm:w-6 h-0.5 bg-primary-400 mx-1 sm:mx-2" />
+                  <span className="text-primary-200 mx-1">-</span>
                 )}
-              </div>
+              </span>
             ))}
+            <span className="text-primary-100 ml-3">
+              – {stepLabels[currentStepIndex]}
+            </span>
           </div>
         </div>
 
@@ -82,22 +73,22 @@ const NavigationFooter = () => {
             onClick={handleBack}
             disabled={!canGoBack}
             variant="outline"
-            className="flex items-center space-x-2 min-w-[100px] sm:min-w-[120px] bg-transparent border-white text-white hover:bg-white hover:text-primary-600 disabled:opacity-50 disabled:hover:bg-transparent disabled:hover:text-white"
+            className="flex items-center space-x-1 min-w-[80px] sm:min-w-[100px] bg-transparent border-white text-white hover:bg-white hover:text-primary-600 disabled:opacity-50 disabled:hover:bg-transparent disabled:hover:text-white text-sm py-1.5"
           >
-            <ChevronLeft className="w-4 h-4" />
+            <ChevronLeft className="w-3 h-3" />
             <span className="hidden sm:inline">Back</span>
           </Button>
 
-          <div className="text-center flex-1 mx-4">
-            <p className="text-sm text-primary-100">Step {currentStepIndex + 1} of {steps.length}</p>
+          <div className="text-center flex-1 mx-3">
+            <p className="text-xs text-primary-100">Step {currentStepIndex + 1} of {steps.length}</p>
           </div>
 
           <Button
             onClick={handleNext}
-            className="flex items-center space-x-2 min-w-[100px] sm:min-w-[120px] bg-white text-primary-600 hover:bg-primary-100"
+            className="flex items-center space-x-1 min-w-[80px] sm:min-w-[100px] bg-white text-primary-600 hover:bg-primary-100 text-sm py-1.5"
           >
-            <span className="text-sm sm:text-base">{isLastStep ? 'Submit' : 'Next'}</span>
-            {!isLastStep && <ChevronRight className="w-4 h-4" />}
+            <span>{isLastStep ? 'Submit' : 'Next'}</span>
+            {!isLastStep && <ChevronRight className="w-3 h-3" />}
           </Button>
         </div>
       </div>

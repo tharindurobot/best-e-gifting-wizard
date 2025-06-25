@@ -36,7 +36,7 @@ const Home = () => {
     <div className="min-h-screen bg-gray-50">
       <Header />
       
-      <main className="container mx-auto px-4 pt-4 pb-32">
+      <main className="container mx-auto px-4 pt-4 pb-28">
         {renderStep()}
       </main>
 

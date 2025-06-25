@@ -16,38 +16,38 @@ const Header = () => {
 
   return (
     <header className="bg-gradient-to-r from-primary-700 to-primary-900 text-white shadow-lg sticky top-0 z-40">
-      <div className="container mx-auto px-4 py-6">
+      <div className="container mx-auto px-4 py-3">
         <div className="flex justify-between items-center">
-          <Link to="/" className="flex items-center space-x-3 hover:opacity-80 transition-opacity">
+          <Link to="/" className="flex items-center space-x-2 hover:opacity-80 transition-opacity">
             <img 
               src="/lovable-uploads/5430729f-f06f-43cf-b98f-83a68ac00d9f.png" 
               alt="BEST E Logo" 
-              className="w-12 h-12 rounded-full object-cover"
+              className="w-8 h-8 rounded-full object-cover"
             />
             <div>
-              <h1 className="text-3xl font-bold tracking-wider">BEST E</h1>
-              <p className="text-primary-100 text-sm">Premium Gift Box Experience</p>
+              <h1 className="text-xl font-bold tracking-wider">BEST E</h1>
+              <p className="text-primary-100 text-xs">Premium Gift Box Experience</p>
             </div>
           </Link>
           
-          <div className="flex items-center space-x-6">
-            <div className="hidden sm:flex items-center space-x-6">
+          <div className="flex items-center space-x-4">
+            <div className="hidden sm:flex items-center space-x-4">
               <div className="text-right">
-                <p className="text-sm text-primary-100">Items in Cart</p>
-                <p className="text-xl font-semibold">{itemCount}</p>
+                <p className="text-xs text-primary-100">Items in Cart</p>
+                <p className="text-lg font-semibold">{itemCount}</p>
               </div>
               <div className="text-right">
-                <p className="text-sm text-primary-100">Total</p>
-                <p className="text-xl font-semibold">Rs {getTotalPrice().toFixed(2)}</p>
+                <p className="text-xs text-primary-100">Total</p>
+                <p className="text-lg font-semibold">Rs {getTotalPrice().toFixed(2)}</p>
               </div>
             </div>
             
             <Button
               onClick={handleWhatsAppClick}
-              className="bg-green-600 hover:bg-green-700 text-white p-2 rounded-full"
+              className="bg-green-600 hover:bg-green-700 text-white p-1.5 rounded-full"
               size="sm"
             >
-              <MessageCircle className="w-5 h-5" />
+              <MessageCircle className="w-4 h-4" />
             </Button>
             
             <Navigation />
@@ -55,7 +55,7 @@ const Header = () => {
         </div>
         
         {/* Mobile cart info */}
-        <div className="sm:hidden mt-4 flex justify-between text-sm">
+        <div className="sm:hidden mt-2 flex justify-between text-xs">
           <div>
             <span className="text-primary-100">Items: </span>
             <span className="font-semibold">{itemCount}</span>
