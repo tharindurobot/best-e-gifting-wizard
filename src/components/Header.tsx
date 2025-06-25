@@ -15,7 +15,7 @@ const Header = () => {
   };
 
   return (
-    <header className="bg-gradient-to-r from-primary-700 to-primary-900 text-white shadow-lg">
+    <header className="bg-gradient-to-r from-primary-700 to-primary-900 text-white shadow-lg sticky top-0 z-40">
       <div className="container mx-auto px-4 py-6">
         <div className="flex justify-between items-center">
           <Link to="/" className="flex items-center space-x-3 hover:opacity-80 transition-opacity">

@@ -19,7 +19,7 @@ const ProgressBar = ({ currentStep }: ProgressBarProps) => {
   const currentStepIndex = steps.findIndex(step => step.key === currentStep);
 
   return (
-    <div className="bg-white shadow-sm border-b">
+    <div className="bg-white shadow-sm border-b sticky top-[140px] z-30">
       <div className="container mx-auto px-4 py-4">
         <div className="flex items-center justify-between">
           {steps.map((step, index) => (

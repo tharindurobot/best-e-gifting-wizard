@@ -6,18 +6,10 @@ import { useOrder } from '@/context/OrderContext';
 import { mockGreetingCards } from '@/data/mockData';
 
 const SelectGreetingCard = () => {
-  const { selectGreetingCard, setCurrentStep, order } = useOrder();
+  const { selectGreetingCard, order } = useOrder();
 
   const handleSelectCard = (card: typeof mockGreetingCards[0]) => {
     selectGreetingCard(card);
-  };
-
-  const handleNext = () => {
-    setCurrentStep('payment');
-  };
-
-  const handleBack = () => {
-    setCurrentStep('items');
   };
 
   return (
@@ -39,7 +31,7 @@ const SelectGreetingCard = () => {
                 className="w-full h-48 object-cover rounded-lg mb-4"
               />
               <h3 className="text-lg font-semibold mb-2">{card.name}</h3>
-              <p className="text-xl font-bold text-primary-600 mb-4">${card.price.toFixed(2)}</p>
+              <p className="text-xl font-bold text-primary-600 mb-4">Rs {card.price.toFixed(2)}</p>
               <Button
                 onClick={() => handleSelectCard(card)}
                 variant={order.greetingCard?.id === card.id ? "default" : "outline"}
@@ -50,17 +42,6 @@ const SelectGreetingCard = () => {
             </CardContent>
           </Card>
         ))}
-      </div>
-
-      <div className="flex justify-between">
-        <Button onClick={handleBack} variant="outline">
-          Back: Choose Items
-        </Button>
-        {order.greetingCard && (
-          <Button onClick={handleNext}>
-            Next: Payment Method
-          </Button>
-        )}
       </div>
     </div>
   );

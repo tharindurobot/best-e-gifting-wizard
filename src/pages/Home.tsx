@@ -9,6 +9,7 @@ import SelectBoxFills from '@/components/steps/SelectBoxFills';
 import SelectGreetingCard from '@/components/steps/SelectGreetingCard';
 import PaymentMethod from '@/components/steps/PaymentMethod';
 import CustomerInfo from '@/components/steps/CustomerInfo';
+import NavigationFooter from '@/components/NavigationFooter';
 
 const Home = () => {
   const { currentStep } = useOrder();
@@ -37,9 +38,11 @@ const Home = () => {
       <Header />
       <ProgressBar currentStep={currentStep} />
       
-      <main className="container mx-auto px-4 pb-12">
+      <main className="container mx-auto px-4 pb-24">
         {renderStep()}
       </main>
+
+      <NavigationFooter />
     </div>
   );
 };

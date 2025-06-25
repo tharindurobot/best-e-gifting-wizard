@@ -1,6 +1,5 @@
 
 import React, { useState, useEffect } from 'react';
-import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
 import { useOrder } from '@/context/OrderContext';
@@ -8,7 +7,7 @@ import { DataService } from '@/services/dataService';
 import { BoxFill } from '@/types';
 
 const SelectBoxFills = () => {
-  const { setCurrentStep, order, setSelectedBoxFills } = useOrder();
+  const { order, setSelectedBoxFills } = useOrder();
   const [boxFills, setBoxFills] = useState<BoxFill[]>([]);
   const [selectedFills, setSelectedFills] = useState<string[]>(order.selectedBoxFills);
 
@@ -43,14 +42,6 @@ const SelectBoxFills = () => {
     
     setSelectedFills(newSelectedFills);
     setSelectedBoxFills(newSelectedFills);
-  };
-
-  const handleNext = () => {
-    setCurrentStep('card');
-  };
-
-  const handleBack = () => {
-    setCurrentStep('items');
   };
 
   return (
@@ -115,15 +106,6 @@ const SelectBoxFills = () => {
           </div>
         </div>
       )}
-
-      <div className="flex justify-between">
-        <Button onClick={handleBack} variant="outline">
-          Back: Select Items
-        </Button>
-        <Button onClick={handleNext}>
-          Next: Choose Greeting Card
-        </Button>
-      </div>
     </div>
   );
 };
