@@ -2,7 +2,6 @@
 import React from 'react';
 import { useOrder } from '@/context/OrderContext';
 import Header from '@/components/Header';
-import ProgressBar from '@/components/ProgressBar';
 import SelectBox from '@/components/steps/SelectBox';
 import SelectItems from '@/components/steps/SelectItems';
 import SelectBoxFills from '@/components/steps/SelectBoxFills';
@@ -36,9 +35,8 @@ const Home = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       <Header />
-      <ProgressBar currentStep={currentStep} />
       
-      <main className="container mx-auto px-4 pb-24">
+      <main className="container mx-auto px-4 pt-4 pb-32">
         {renderStep()}
       </main>
 
