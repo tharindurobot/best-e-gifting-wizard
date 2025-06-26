@@ -7,6 +7,8 @@ import { Textarea } from '@/components/ui/textarea';
 import { useOrder } from '@/context/OrderContext';
 import { useToast } from '@/hooks/use-toast';
 import { DataService } from '@/services/dataService';
+import emailjs from '@emailjs/browser';
+
 const CustomerInfo = () => {
   const {
     setCustomerInfo,
@@ -15,11 +17,11 @@ const CustomerInfo = () => {
     resetOrder,
     setCurrentStep
   } = useOrder();
-  const {
-    toast
-  } = useToast();
+  const { toast } = useToast();
   const [formData, setFormData] = useState(order.customerInfo);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [deliveryDate, setDeliveryDate] = useState('');
+
   const handleInputChange = (field: keyof typeof formData, value: string) => {
     const updatedData = {
       ...formData,
@@ -28,52 +30,57 @@ const CustomerInfo = () => {
     setFormData(updatedData);
     setCustomerInfo(updatedData);
   };
+
   const validateForm = () => {
     const required = ['fullName', 'address', 'email', 'phone'];
     return required.every(field => formData[field as keyof typeof formData].trim() !== '');
   };
-  const generateOrderEmail = () => {
-    const itemsList = order.items.map(item => `- ${item.item.name} (Code: ${item.item.itemCode}) (x${item.quantity}) - Rs ${(item.item.price * item.quantity).toFixed(2)}`).join('\n');
+
+  const prepareOrderData = () => {
+    const itemsList = order.items.map(item => 
+      `${item.item.name} (Code: ${item.item.itemCode}) - Qty: ${item.quantity} - Rs ${(item.item.price * item.quantity).toFixed(2)}`
+    ).join('\n');
+
     const paperColors = DataService.getPaperColors();
-    const selectedColorNames = order.selectedPaperColors.filter(colorId => colorId !== 'mix-colors').map(colorId => {
-      const color = paperColors.find(c => c.id === colorId);
-      return color ? color.name : colorId;
-    });
-    const colorInfo = selectedColorNames.length > 0 ? `Selected Paper Colors: ${selectedColorNames.join(', ')}${order.selectedPaperColors.includes('mix-colors') ? ' (Mix Colors)' : ''}` : 'No paper colors selected';
+    const selectedColorNames = order.selectedPaperColors
+      .filter(colorId => colorId !== 'mix-colors')
+      .map(colorId => {
+        const color = paperColors.find(c => c.id === colorId);
+        return color ? color.name : colorId;
+      });
+    
+    const colorInfo = selectedColorNames.length > 0 
+      ? `${selectedColorNames.join(', ')}${order.selectedPaperColors.includes('mix-colors') ? ' (Mix Colors)' : ''}`
+      : 'No paper colors selected';
+
     const boxFills = DataService.getBoxFills();
     const selectedFillNames = order.selectedBoxFills.map(fillId => {
       const fill = boxFills.find(f => f.id === fillId);
       return fill ? fill.name : fillId;
     });
-    const fillInfo = selectedFillNames.length > 0 ? `Selected Box Fills: ${selectedFillNames.join(', ')}` : 'No box fills selected';
-    return `
-New Order from BEST E Gift Boxes
+    const fillInfo = selectedFillNames.length > 0 
+      ? selectedFillNames.join(', ') 
+      : 'No box fills selected';
 
-CUSTOMER INFORMATION:
-- Name: ${formData.fullName}
-- Email: ${formData.email}
-- Phone: ${formData.phone}
-- Address: ${formData.address}
-${formData.comment ? `- Comment: ${formData.comment}` : ''}
-
-ORDER DETAILS:
-- Gift Box: ${order.box?.name} (${order.box?.color}) - Rs ${order.box?.price.toFixed(2)}
-${order.box?.paperFills ? `- ${colorInfo}` : ''}
-- ${fillInfo}
-
-SELECTED ITEMS:
-${itemsList}
-
-- Greeting Card: ${order.greetingCard?.name} - Rs ${order.greetingCard?.price.toFixed(2)}
-
-PAYMENT METHOD: ${order.paymentMethod === 'cash' ? 'Cash on Delivery' : 'Bank Transfer'}
-${order.receiptFile ? `Receipt File: ${order.receiptFile.name}` : ''}
-
-TOTAL AMOUNT: Rs ${getTotalPrice().toFixed(2)}
-
-Order placed on: ${new Date().toLocaleString()}
-    `.trim();
+    return {
+      customer_name: formData.fullName,
+      customer_email: formData.email,
+      customer_phone: formData.phone,
+      delivery_address: formData.address,
+      customer_comment: formData.comment || 'No additional comments',
+      delivery_date: deliveryDate || 'Not specified',
+      gift_box: order.box ? `${order.box.name} (${order.box.color}) - Rs ${order.box.price.toFixed(2)}` : 'No box selected',
+      greeting_card: order.greetingCard ? `${order.greetingCard.name} - Rs ${order.greetingCard.price.toFixed(2)}` : 'No greeting card selected',
+      paper_colors: colorInfo,
+      box_fills: fillInfo,
+      items_list: itemsList,
+      payment_method: order.paymentMethod === 'cash' ? 'Cash on Delivery' : 'Bank Transfer',
+      receipt_file: order.receiptFile ? order.receiptFile.name : 'No receipt uploaded',
+      total_amount: `Rs ${getTotalPrice().toFixed(2)}`,
+      order_date: new Date().toLocaleString()
+    };
   };
+
   const handleSubmitOrder = async () => {
     if (!validateForm()) {
       toast({
@@ -83,25 +90,34 @@ Order placed on: ${new Date().toLocaleString()}
       });
       return;
     }
-    setIsSubmitting(true);
-    try {
-      // Simulate email sending
-      const emailContent = generateOrderEmail();
-      console.log('Order Email Content:', emailContent);
-      console.log('Sending to: shop@example.com');
 
-      // Simulate API call delay
-      await new Promise(resolve => setTimeout(resolve, 2000));
+    setIsSubmitting(true);
+    
+    try {
+      const orderData = prepareOrderData();
+      
+      // Send email using EmailJS
+      const result = await emailjs.send(
+        'service_lbcjmx8',
+        'template_vsl499l',
+        orderData,
+        'sTY75PlHXv2X4CpeY'
+      );
+
+      console.log('Email sent successfully:', result);
+
       toast({
         title: "Order Placed Successfully!",
-        description: "Your order has been sent and will be processed soon."
+        description: "Your order has been sent to our shop and will be processed soon."
       });
 
       // Reset order after successful submission
       setTimeout(() => {
         resetOrder();
       }, 3000);
+
     } catch (error) {
+      console.error('Email send failed:', error);
       toast({
         title: "Order Failed",
         description: "There was an error placing your order. Please try again.",
@@ -111,10 +127,13 @@ Order placed on: ${new Date().toLocaleString()}
       setIsSubmitting(false);
     }
   };
+
   const handleBack = () => {
     setCurrentStep('payment');
   };
-  return <div className="space-y-6">
+
+  return (
+    <div className="space-y-6">
       <div className="text-center">
         <h2 className="text-3xl font-bold text-gray-900 mb-2">Customer Information</h2>
         <p className="text-gray-600">Complete your order with your delivery details</p>
@@ -129,27 +148,65 @@ Order placed on: ${new Date().toLocaleString()}
             <div className="space-y-4">
               <div>
                 <Label htmlFor="fullName">Full Name *</Label>
-                <Input id="fullName" value={formData.fullName} onChange={e => handleInputChange('fullName', e.target.value)} placeholder="Enter your full name" />
+                <Input 
+                  id="fullName" 
+                  value={formData.fullName} 
+                  onChange={e => handleInputChange('fullName', e.target.value)} 
+                  placeholder="Enter your full name" 
+                />
               </div>
 
               <div>
                 <Label htmlFor="email">Email Address *</Label>
-                <Input id="email" type="email" value={formData.email} onChange={e => handleInputChange('email', e.target.value)} placeholder="Enter your email" />
+                <Input 
+                  id="email" 
+                  type="email" 
+                  value={formData.email} 
+                  onChange={e => handleInputChange('email', e.target.value)} 
+                  placeholder="Enter your email" 
+                />
               </div>
 
               <div>
                 <Label htmlFor="phone">Phone Number *</Label>
-                <Input id="phone" value={formData.phone} onChange={e => handleInputChange('phone', e.target.value)} placeholder="Enter your phone number" />
+                <Input 
+                  id="phone" 
+                  value={formData.phone} 
+                  onChange={e => handleInputChange('phone', e.target.value)} 
+                  placeholder="Enter your phone number" 
+                />
               </div>
 
               <div>
                 <Label htmlFor="address">Delivery Address *</Label>
-                <Textarea id="address" value={formData.address} onChange={e => handleInputChange('address', e.target.value)} placeholder="Enter your complete delivery address" rows={4} />
+                <Textarea 
+                  id="address" 
+                  value={formData.address} 
+                  onChange={e => handleInputChange('address', e.target.value)} 
+                  placeholder="Enter your complete delivery address" 
+                  rows={4} 
+                />
+              </div>
+
+              <div>
+                <Label htmlFor="deliveryDate">Preferred Delivery Date (Optional)</Label>
+                <Input 
+                  id="deliveryDate" 
+                  type="date"
+                  value={deliveryDate} 
+                  onChange={e => setDeliveryDate(e.target.value)} 
+                />
               </div>
 
               <div>
                 <Label htmlFor="comment">Additional Comments (Optional)</Label>
-                <Textarea id="comment" value={formData.comment || ''} onChange={e => handleInputChange('comment', e.target.value)} placeholder="Any special instructions or comments for your order" rows={3} />
+                <Textarea 
+                  id="comment" 
+                  value={formData.comment || ''} 
+                  onChange={e => handleInputChange('comment', e.target.value)} 
+                  placeholder="Any special instructions or comments for your order" 
+                  rows={3} 
+                />
               </div>
             </div>
           </CardContent>
@@ -161,33 +218,41 @@ Order placed on: ${new Date().toLocaleString()}
             <h3 className="text-xl font-semibold mb-4">Final Order Summary</h3>
             
             <div className="space-y-3">
-              {order.box && <div className="flex justify-between">
+              {order.box && (
+                <div className="flex justify-between">
                   <span>{order.box.name}</span>
                   <span>Rs {order.box.price.toFixed(2)}</span>
-                </div>}
+                </div>
+              )}
 
-              {order.items.map(cartItem => <div key={cartItem.item.id} className="flex justify-between text-sm">
+              {order.items.map(cartItem => (
+                <div key={cartItem.item.id} className="flex justify-between text-sm">
                   <span>{cartItem.item.name} ({cartItem.item.itemCode}) (x{cartItem.quantity})</span>
                   <span>Rs {(cartItem.item.price * cartItem.quantity).toFixed(2)}</span>
-                </div>)}
+                </div>
+              ))}
 
-              {order.greetingCard && <div className="flex justify-between">
+              {order.greetingCard && (
+                <div className="flex justify-between">
                   <span>{order.greetingCard.name}</span>
                   <span>Rs {order.greetingCard.price.toFixed(2)}</span>
-                </div>}
+                </div>
+              )}
 
-              {order.selectedBoxFills.length > 0 && <div className="bg-green-50 p-3 rounded mt-4">
+              {order.selectedBoxFills.length > 0 && (
+                <div className="bg-green-50 p-3 rounded mt-4">
                   <p className="text-sm font-medium text-green-700">Selected Box Fills (FREE):</p>
                   <div className="flex flex-wrap gap-1 mt-1">
                     {order.selectedBoxFills.map(fillId => {
-                  const boxFills = DataService.getBoxFills();
-                  const fill = boxFills.find(f => f.id === fillId);
-                  return fill ? <span key={fillId} className="text-xs bg-green-100 px-2 py-1 rounded">
+                      const boxFills = DataService.getBoxFills();
+                      const fill = boxFills.find(f => f.id === fillId);
+                      return fill ? <span key={fillId} className="text-xs bg-green-100 px-2 py-1 rounded">
                           {fill.name}
                         </span> : null;
-                })}
+                    })}
                   </div>
-                </div>}
+                </div>
+              )}
 
               <div className="border-t pt-3">
                 <div className="flex justify-between text-lg font-bold">
@@ -202,25 +267,40 @@ Order placed on: ${new Date().toLocaleString()}
                 {order.receiptFile && <p className="text-sm text-green-600 mt-1">Receipt uploaded: {order.receiptFile.name}</p>}
               </div>
 
-              {order.selectedPaperColors.length > 0 && <div className="bg-primary-50 p-3 rounded mt-4">
+              {order.selectedPaperColors.length > 0 && (
+                <div className="bg-primary-50 p-3 rounded mt-4">
                   <p className="text-sm font-medium text-primary-700">Paper Colors:</p>
                   <div className="flex flex-wrap gap-1 mt-1">
                     {order.selectedPaperColors.filter(colorId => colorId !== 'mix-colors').map(colorId => {
-                  const paperColors = DataService.getPaperColors();
-                  const color = paperColors.find(c => c.id === colorId);
-                  return color ? <span key={colorId} className="text-xs bg-white px-2 py-1 rounded">
+                      const paperColors = DataService.getPaperColors();
+                      const color = paperColors.find(c => c.id === colorId);
+                      return color ? <span key={colorId} className="text-xs bg-white px-2 py-1 rounded">
                             {color.name}
                           </span> : null;
-                })}
+                    })}
                     {order.selectedPaperColors.includes('mix-colors') && <span className="text-xs bg-primary-100 px-2 py-1 rounded">Mix Colors</span>}
                   </div>
-                </div>}
+                </div>
+              )}
             </div>
           </CardContent>
         </Card>
       </div>
 
-      
-    </div>;
+      <div className="flex justify-between">
+        <Button onClick={handleBack} variant="outline">
+          Back to Payment
+        </Button>
+        <Button 
+          onClick={handleSubmitOrder} 
+          disabled={isSubmitting}
+          className="bg-primary-600 hover:bg-primary-700"
+        >
+          {isSubmitting ? 'Placing Order...' : 'Place Order'}
+        </Button>
+      </div>
+    </div>
+  );
 };
+
 export default CustomerInfo;
