@@ -1,5 +1,4 @@
-
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -140,9 +139,15 @@ const CustomerInfo = () => {
     }
   };
 
-  const handleBack = () => {
-    setCurrentStep('payment');
-  };
+  // Make submit function available to parent components
+  useEffect(() => {
+    (window as any).submitOrder = handleSubmitOrder;
+    (window as any).isSubmitting = isSubmitting;
+    return () => {
+      delete (window as any).submitOrder;
+      delete (window as any).isSubmitting;
+    };
+  }, [handleSubmitOrder, isSubmitting]);
 
   return (
     <div className="space-y-6">
@@ -297,19 +302,6 @@ const CustomerInfo = () => {
             </div>
           </CardContent>
         </Card>
-      </div>
-
-      <div className="flex justify-between">
-        <Button onClick={handleBack} variant="outline">
-          Back to Payment
-        </Button>
-        <Button 
-          onClick={handleSubmitOrder} 
-          disabled={isSubmitting}
-          className="bg-primary-600 hover:bg-primary-700"
-        >
-          {isSubmitting ? 'Placing Order...' : 'Place Order'}
-        </Button>
       </div>
     </div>
   );
