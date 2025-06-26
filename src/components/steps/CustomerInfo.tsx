@@ -39,7 +39,7 @@ const CustomerInfo = () => {
 
   const prepareOrderData = () => {
     const itemsList = order.items.map(item => 
-      `${item.item.name} (Code: ${item.item.itemCode}) - Qty: ${item.quantity} - Rs ${(item.item.price * item.quantity).toFixed(2)}`
+      `${item.item.name} (Code: ${item.item.itemCode || 'N/A'}) - Qty: ${item.quantity} - Rs ${(item.item.price * item.quantity).toFixed(2)}`
     ).join('\n');
 
     const paperColors = DataService.getPaperColors();
@@ -75,9 +75,9 @@ const CustomerInfo = () => {
       greeting_card: order.greetingCard ? `${order.greetingCard.name} - Rs ${order.greetingCard.price.toFixed(2)}` : 'No greeting card selected',
       paper_colors: colorInfo,
       box_fills: fillInfo,
-      items_list: itemsList,
+      items_list: itemsList || 'No items selected',
       payment_method: order.paymentMethod === 'cash' ? 'Cash on Delivery' : 'Bank Transfer',
-      receipt_file: order.receiptFile ? order.receiptFile.name : 'No receipt uploaded',
+      receipt_file: order.receiptFile ? `Receipt uploaded: ${order.receiptFile.name}` : 'No receipt uploaded',
       total_amount: `Rs ${getTotalPrice().toFixed(2)}`,
       order_date: new Date().toLocaleString()
     };
@@ -97,6 +97,8 @@ const CustomerInfo = () => {
     
     try {
       const orderData = prepareOrderData();
+      
+      console.log('Sending order data:', orderData);
       
       // Send email using EmailJS
       const result = await emailjs.send(
@@ -120,9 +122,15 @@ const CustomerInfo = () => {
 
     } catch (error) {
       console.error('Email send failed:', error);
+      
+      // Show more specific error message
+      const errorMessage = error && typeof error === 'object' && 'text' in error 
+        ? error.text 
+        : "There was an error placing your order. Please try again.";
+      
       toast({
         title: "Order Failed",
-        description: "There was an error placing your order. Please try again.",
+        description: `Error: ${errorMessage}`,
         variant: "destructive"
       });
     } finally {
