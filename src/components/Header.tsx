@@ -13,7 +13,7 @@ const Header = () => {
   const handleWhatsAppClick = () => {
     window.open('https://wa.me/94712345678', '_blank');
   };
-  return <header className="bg-gradient-to-r from-primary-700 to-primary-900 text-white shadow-lg sticky top-0 z-40">
+  return <header className="bg-gradient-to-r from-primary-700 to-primary-900 text-white shadow-lg sticky top-0 z-40 py-0">
       <div className="container mx-auto px-[19px] py-[11px]">
         <div className="flex justify-between items-center">
           <Link to="/" className="flex items-center space-x-3 hover:opacity-80 transition-opacity">
