@@ -63,23 +63,25 @@ const CustomerInfo = () => {
       ? selectedFillNames.join(', ') 
       : 'No box fills selected';
 
+    // Format cart items with total
+    const cartItemsWithTotal = order.items.map(item => 
+      `${item.item.name} (Code: ${item.item.itemCode || 'N/A'}) - Qty: ${item.quantity} - Rs ${(item.item.price * item.quantity).toFixed(2)}`
+    ).join('\n') + 
+    (order.box ? `\n${order.box.name} (${order.box.color}) - Rs ${order.box.price.toFixed(2)}` : '') +
+    (order.greetingCard ? `\n${order.greetingCard.name} - Rs ${order.greetingCard.price.toFixed(2)}` : '') +
+    `\n\nTotal Amount: Rs ${getTotalPrice().toFixed(2)}`;
+
     return {
-      to_email: 'dashbeste@gmail.com',
-      customer_name: formData.fullName,
-      customer_email: formData.email,
-      customer_phone: formData.phone,
-      delivery_address: formData.address,
-      customer_comment: formData.comment || 'No additional comments',
+      from_name: formData.fullName,
+      from_email: formData.email,
+      phone: formData.phone,
+      address: formData.address,
+      comment: formData.comment || 'No additional comments',
       delivery_date: deliveryDate || 'Not specified',
-      gift_box: order.box ? `${order.box.name} (${order.box.color}) - Rs ${order.box.price.toFixed(2)}` : 'No box selected',
       greeting_card: order.greetingCard ? `${order.greetingCard.name} - Rs ${order.greetingCard.price.toFixed(2)}` : 'No greeting card selected',
-      paper_colors: colorInfo,
-      box_fills: fillInfo,
-      items_list: itemsList || 'No items selected',
-      payment_method: order.paymentMethod === 'cash' ? 'Cash on Delivery' : 'Bank Transfer',
-      receipt_file: order.receiptFile ? `Receipt uploaded: ${order.receiptFile.name}` : 'No receipt uploaded',
-      total_amount: `Rs ${getTotalPrice().toFixed(2)}`,
-      order_date: new Date().toLocaleString()
+      paper_fill_color: `Paper Colors: ${colorInfo}\nBox Fills: ${fillInfo}`,
+      cart_items: cartItemsWithTotal,
+      attachment: order.receiptFile ? `Receipt uploaded: ${order.receiptFile.name}` : 'No receipt uploaded'
     };
   };
 
@@ -100,10 +102,10 @@ const CustomerInfo = () => {
       
       console.log('Sending order data:', orderData);
       
-      // Send email using EmailJS
+      // Send email using EmailJS with new template
       const result = await emailjs.send(
         'service_lbcjmx8',
-        'template_vsl499l',
+        'template_whj0geq',
         orderData,
         'sTY75PlHXv2X4CpeY'
       );
