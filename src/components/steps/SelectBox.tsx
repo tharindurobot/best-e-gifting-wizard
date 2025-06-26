@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -5,6 +6,7 @@ import { useOrder } from '@/context/OrderContext';
 import { DataService } from '@/services/dataService';
 import { Box } from '@/types';
 import PaperColorSelector from '@/components/PaperColorSelector';
+
 const SelectBox = () => {
   const {
     selectBox,
@@ -12,6 +14,7 @@ const SelectBox = () => {
     order
   } = useOrder();
   const [boxes, setBoxes] = useState<Box[]>([]);
+
   useEffect(() => {
     loadBoxes();
   }, []);
@@ -28,26 +31,32 @@ const SelectBox = () => {
       window.removeEventListener('adminDataUpdate', handleStorageChange);
     };
   }, []);
+
   const loadBoxes = () => {
     const storedBoxes = DataService.getBoxes();
     setBoxes(storedBoxes);
   };
+
   const handleSelectBox = (box: Box) => {
     selectBox(box);
   };
+
   const handleNext = () => {
     if (order.box) {
       setCurrentStep('items');
     }
   };
-  return <div className="space-y-6">
+
+  return (
+    <div className="space-y-6">
       <div className="text-center">
         <h2 className="text-3xl font-bold text-gray-900 mb-2">Choose Your Gift Box</h2>
         <p className="text-gray-600">Select the perfect box for your special gift</p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {boxes.map(box => <Card key={box.id} className={`cursor-pointer transition-all duration-300 hover:shadow-lg ${order.box?.id === box.id ? 'ring-2 ring-primary-600 shadow-lg' : ''}`}>
+        {boxes.map(box => (
+          <Card key={box.id} className={`cursor-pointer transition-all duration-300 hover:shadow-lg ${order.box?.id === box.id ? 'ring-2 ring-primary-600 shadow-lg' : ''}`}>
             <CardContent className="p-6">
               <img src={box.image} alt={box.name} className="w-full h-48 object-cover rounded-lg mb-4" />
               <h3 className="text-xl font-semibold mb-2">{box.name}</h3>
@@ -58,12 +67,13 @@ const SelectBox = () => {
                 {order.box?.id === box.id ? 'Selected' : 'Select Box'}
               </Button>
             </CardContent>
-          </Card>)}
+          </Card>
+        ))}
       </div>
 
       <PaperColorSelector />
-
-      {order.box}
-    </div>;
+    </div>
+  );
 };
+
 export default SelectBox;
