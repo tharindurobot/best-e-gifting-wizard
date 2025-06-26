@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -8,12 +7,18 @@ import { AspectRatio } from '@/components/ui/aspect-ratio';
 import { useOrder } from '@/context/OrderContext';
 import { DataService } from '@/services/dataService';
 import { Item, ITEM_CATEGORIES } from '@/types';
-
 const SelectItems = () => {
-  const { addItem, updateItemQuantity, removeItem, setCurrentStep, order } = useOrder();
-  const [quantities, setQuantities] = useState<{ [key: string]: number }>({});
+  const {
+    addItem,
+    updateItemQuantity,
+    removeItem,
+    setCurrentStep,
+    order
+  } = useOrder();
+  const [quantities, setQuantities] = useState<{
+    [key: string]: number;
+  }>({});
   const [items, setItems] = useState<Item[]>([]);
-
   useEffect(() => {
     loadItems();
   }, []);
@@ -23,102 +28,76 @@ const SelectItems = () => {
     const handleStorageChange = () => {
       loadItems();
     };
-
     window.addEventListener('storage', handleStorageChange);
-    
+
     // Also listen for custom events from admin panel
     window.addEventListener('adminDataUpdate', handleStorageChange);
-
     return () => {
       window.removeEventListener('storage', handleStorageChange);
       window.removeEventListener('adminDataUpdate', handleStorageChange);
     };
   }, []);
-
   const loadItems = () => {
     const storedItems = DataService.getItems();
     setItems(storedItems);
   };
-
   const handleQuantityChange = (itemId: string, quantity: number) => {
-    setQuantities(prev => ({ ...prev, [itemId]: quantity }));
+    setQuantities(prev => ({
+      ...prev,
+      [itemId]: quantity
+    }));
   };
-
   const handleAddItem = (item: Item) => {
     const quantity = quantities[item.id] || 1;
     addItem(item, quantity);
-    setQuantities(prev => ({ ...prev, [item.id]: 0 }));
+    setQuantities(prev => ({
+      ...prev,
+      [item.id]: 0
+    }));
   };
-
   const getItemQuantityInCart = (itemId: string) => {
     const cartItem = order.items.find(item => item.item.id === itemId);
     return cartItem ? cartItem.quantity : 0;
   };
-
   const handleNext = () => {
     setCurrentStep('fills');
   };
-
   const handleBack = () => {
     setCurrentStep('box');
   };
 
   // Filter categories that have items
-  const categoriesWithItems = ITEM_CATEGORIES.filter(category => 
-    items.some(item => item.category === category)
-  );
-
-  return (
-    <div className="space-y-6">
+  const categoriesWithItems = ITEM_CATEGORIES.filter(category => items.some(item => item.category === category));
+  return <div className="space-y-6">
       <div className="text-center">
         <h2 className="text-3xl font-bold text-gray-900 mb-2">Choose Your Items</h2>
         <p className="text-gray-600">Add items to your gift box from our curated selection</p>
       </div>
 
-      {categoriesWithItems.length > 0 ? (
-        <Tabs defaultValue={categoriesWithItems[0]} className="w-full">
+      {categoriesWithItems.length > 0 ? <Tabs defaultValue={categoriesWithItems[0]} className="w-full">
           <TabsList className="grid w-full grid-cols-2 md:grid-cols-3 lg:grid-cols-5">
-            {categoriesWithItems.slice(0, 5).map((category) => (
-              <TabsTrigger key={category} value={category} className="text-xs">
+            {categoriesWithItems.slice(0, 5).map(category => <TabsTrigger key={category} value={category} className="text-xs">
                 {category}
-              </TabsTrigger>
-            ))}
+              </TabsTrigger>)}
           </TabsList>
 
-          {categoriesWithItems.slice(5).length > 0 && (
-            <TabsList className="grid w-full grid-cols-2 md:grid-cols-3 lg:grid-cols-5 mt-2">
-              {categoriesWithItems.slice(5).map((category) => (
-                <TabsTrigger key={category} value={category} className="text-xs">
+          {categoriesWithItems.slice(5).length > 0 && <TabsList className="grid w-full grid-cols-2 md:grid-cols-3 lg:grid-cols-5 mt-2">
+              {categoriesWithItems.slice(5).map(category => <TabsTrigger key={category} value={category} className="text-xs">
                   {category}
-                </TabsTrigger>
-              ))}
-            </TabsList>
-          )}
+                </TabsTrigger>)}
+            </TabsList>}
 
-          {categoriesWithItems.map((category) => (
-            <TabsContent key={category} value={category} className="space-y-4">
+          {categoriesWithItems.map(category => <TabsContent key={category} value={category} className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                {items
-                  .filter(item => item.category === category)
-                  .map((item) => {
-                    const cartQuantity = getItemQuantityInCart(item.id);
-                    const inputQuantity = quantities[item.id] || 1;
-                    
-                    return (
-                      <Card 
-                        key={item.id} 
-                        className="hover:shadow-lg transition-shadow relative overflow-hidden"
-                        style={{
-                          backgroundImage: `linear-gradient(135deg, rgba(148, 88, 15, 0.05) 0%, transparent 100%), url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%2394580f' fill-opacity='0.08'%3E%3Cpath d='m0 18 9-9h2v2l-9 9z'/%3E%3Cpath d='m10 10 9-9h2v2l-9 9z'/%3E%3C/g%3E%3C/svg%3E")`
-                        }}
-                      >
+                {items.filter(item => item.category === category).map(item => {
+            const cartQuantity = getItemQuantityInCart(item.id);
+            const inputQuantity = quantities[item.id] || 1;
+            return <Card key={item.id} className="hover:shadow-lg transition-shadow relative overflow-hidden" style={{
+              backgroundImage: `linear-gradient(135deg, rgba(148, 88, 15, 0.05) 0%, transparent 100%), url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%2394580f' fill-opacity='0.08'%3E%3Cpath d='m0 18 9-9h2v2l-9 9z'/%3E%3Cpath d='m10 10 9-9h2v2l-9 9z'/%3E%3C/g%3E%3C/svg%3E")`
+            }}>
                         <CardContent className="p-6">
                           <AspectRatio ratio={1} className="mb-4">
-                            <img
-                              src={item.image}
-                              alt={item.name}
-                              className="w-full h-full object-cover rounded-lg"
-                            />
+                            <img src={item.image} alt={item.name} className="w-full h-full object-cover rounded-lg" />
                           </AspectRatio>
                           <div className="mb-2">
                             <h3 className="text-lg font-semibold">{item.name}</h3>
@@ -126,76 +105,39 @@ const SelectItems = () => {
                           </div>
                           <p className="text-xl font-bold text-primary-600 mb-4">Rs {item.price.toFixed(2)}</p>
                           
-                          {cartQuantity > 0 && (
-                            <div className="mb-4 p-3 bg-primary-50 rounded-lg">
+                          {cartQuantity > 0 && <div className="mb-4 p-3 bg-primary-50 rounded-lg">
                               <p className="text-sm text-primary-700">In cart: {cartQuantity}</p>
                               <div className="flex gap-2 mt-2">
-                                <Button
-                                  size="sm"
-                                  variant="outline"
-                                  onClick={() => updateItemQuantity(item.id, cartQuantity - 1)}
-                                >
+                                <Button size="sm" variant="outline" onClick={() => updateItemQuantity(item.id, cartQuantity - 1)}>
                                   -
                                 </Button>
-                                <Button
-                                  size="sm"
-                                  variant="outline"
-                                  onClick={() => updateItemQuantity(item.id, cartQuantity + 1)}
-                                >
+                                <Button size="sm" variant="outline" onClick={() => updateItemQuantity(item.id, cartQuantity + 1)}>
                                   +
                                 </Button>
-                                <Button
-                                  size="sm"
-                                  variant="destructive"
-                                  onClick={() => removeItem(item.id)}
-                                >
+                                <Button size="sm" variant="destructive" onClick={() => removeItem(item.id)}>
                                   Remove
                                 </Button>
                               </div>
-                            </div>
-                          )}
+                            </div>}
 
                           <div className="flex items-center gap-2 mb-3">
-                            <Input
-                              type="number"
-                              min="1"
-                              value={inputQuantity}
-                              onChange={(e) => handleQuantityChange(item.id, parseInt(e.target.value) || 1)}
-                              className="w-20"
-                            />
+                            <Input type="number" min="1" value={inputQuantity} onChange={e => handleQuantityChange(item.id, parseInt(e.target.value) || 1)} className="w-20" />
                             <span className="text-sm text-gray-600">qty</span>
                           </div>
 
-                          <Button
-                            onClick={() => handleAddItem(item)}
-                            className="w-full"
-                          >
+                          <Button onClick={() => handleAddItem(item)} className="w-full">
                             Add to Box
                           </Button>
                         </CardContent>
-                      </Card>
-                    );
-                  })}
+                      </Card>;
+          })}
               </div>
-            </TabsContent>
-          ))}
-        </Tabs>
-      ) : (
-        <div className="text-center py-12">
+            </TabsContent>)}
+        </Tabs> : <div className="text-center py-12">
           <p className="text-gray-500 text-lg">No items available yet. Please check back later!</p>
-        </div>
-      )}
+        </div>}
 
-      <div className="flex justify-between">
-        <Button onClick={handleBack} variant="outline">
-          Back: Select Box
-        </Button>
-        <Button onClick={handleNext}>
-          Next: Choose Box Fills
-        </Button>
-      </div>
-    </div>
-  );
+      
+    </div>;
 };
-
 export default SelectItems;
