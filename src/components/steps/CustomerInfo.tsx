@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -63,6 +64,7 @@ const CustomerInfo = () => {
       : 'No box fills selected';
 
     return {
+      to_email: 'dashbeste@gmail.com',
       customer_name: formData.fullName,
       customer_email: formData.email,
       customer_phone: formData.phone,
