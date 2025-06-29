@@ -10,6 +10,7 @@ import SelectGreetingCard from '@/components/steps/SelectGreetingCard';
 import PaymentMethod from '@/components/steps/PaymentMethod';
 import CustomerInfo from '@/components/steps/CustomerInfo';
 import NavigationFooter from '@/components/NavigationFooter';
+import ScrollToTopButton from '@/components/ScrollToTopButton';
 
 const Home = () => {
   const { currentStep } = useOrder();
@@ -43,6 +44,7 @@ const Home = () => {
       </main>
 
       <NavigationFooter />
+      <ScrollToTopButton />
     </div>
   );
 };

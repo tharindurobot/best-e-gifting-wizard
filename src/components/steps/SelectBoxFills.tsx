@@ -57,11 +57,12 @@ const SelectBoxFills = () => {
             <Card 
               key={fill.id} 
               className={`cursor-pointer transition-all duration-300 hover:shadow-lg relative overflow-hidden ${
-                selectedFills.includes(fill.id) ? 'ring-2 ring-primary-600 shadow-lg' : ''
+                selectedFills.includes(fill.id) ? 'ring-2 ring-primary-600 shadow-lg bg-primary-50' : ''
               }`}
               style={{
                 backgroundImage: `linear-gradient(135deg, ${selectedFills.includes(fill.id) ? 'rgba(148, 88, 15, 0.1)' : 'rgba(148, 88, 15, 0.05)'} 0%, transparent 100%), url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23${selectedFills.includes(fill.id) ? '94580f' : 'e5e7eb'}' fill-opacity='0.1'%3E%3Cpath d='m0 18 9-9h2v2l-9 9z'/%3E%3Cpath d='m10 10 9-9h2v2l-9 9z'/%3E%3C/g%3E%3C/svg%3E")`
               }}
+              onClick={() => handleFillToggle(fill.id)}
             >
               <CardContent className="p-4">
                 <div className="aspect-square mb-3 rounded-lg overflow-hidden">
@@ -78,6 +79,7 @@ const SelectBoxFills = () => {
                     <Checkbox
                       checked={selectedFills.includes(fill.id)}
                       onCheckedChange={() => handleFillToggle(fill.id)}
+                      onClick={(e) => e.stopPropagation()}
                     />
                   </div>
                 </div>
@@ -99,7 +101,7 @@ const SelectBoxFills = () => {
               const fill = boxFills.find(f => f.id === fillId);
               return fill ? (
                 <span key={fillId} className="bg-primary-100 text-primary-700 px-3 py-1 rounded-full text-sm">
-                  {fill.name}
+                  {fill.name} ✓
                 </span>
               ) : null;
             })}

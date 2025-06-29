@@ -21,9 +21,13 @@ const SelectGreetingCard = () => {
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
         {mockGreetingCards.map((card) => (
-          <Card key={card.id} className={`cursor-pointer transition-all duration-300 hover:shadow-lg ${
-            order.greetingCard?.id === card.id ? 'ring-2 ring-primary-600 shadow-lg' : ''
-          }`}>
+          <Card 
+            key={card.id} 
+            className={`cursor-pointer transition-all duration-300 hover:shadow-lg ${
+              order.greetingCard?.id === card.id ? 'ring-2 ring-primary-600 shadow-lg bg-primary-50' : ''
+            }`}
+            onClick={() => handleSelectCard(card)}
+          >
             <CardContent className="p-4">
               <img
                 src={card.image}
@@ -33,11 +37,14 @@ const SelectGreetingCard = () => {
               <h3 className="text-lg font-semibold mb-2">{card.name}</h3>
               <p className="text-xl font-bold text-primary-600 mb-4">Rs {card.price.toFixed(2)}</p>
               <Button
-                onClick={() => handleSelectCard(card)}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleSelectCard(card);
+                }}
                 variant={order.greetingCard?.id === card.id ? "default" : "outline"}
                 className="w-full"
               >
-                {order.greetingCard?.id === card.id ? 'Selected' : 'Select Card'}
+                {order.greetingCard?.id === card.id ? 'Selected ✓' : 'Select Card'}
               </Button>
             </CardContent>
           </Card>

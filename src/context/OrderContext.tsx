@@ -1,3 +1,4 @@
+
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 import { Order, Box, Item, GreetingCard, CartItem, OrderStep } from '@/types';
 
@@ -30,6 +31,7 @@ const initialOrder: Order = {
   paymentMethod: 'cash',
   customerInfo: {
     fullName: '',
+    billingAddress: '',
     address: '',
     email: '',
     phone: '',

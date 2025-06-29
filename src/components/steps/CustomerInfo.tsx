@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -18,7 +19,10 @@ const CustomerInfo = () => {
     setCurrentStep
   } = useOrder();
   const { toast } = useToast();
-  const [formData, setFormData] = useState(order.customerInfo);
+  const [formData, setFormData] = useState({
+    ...order.customerInfo,
+    billingAddress: order.customerInfo.billingAddress || ''
+  });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [deliveryDate, setDeliveryDate] = useState('');
 
@@ -32,7 +36,7 @@ const CustomerInfo = () => {
   };
 
   const validateForm = () => {
-    const required = ['fullName', 'address', 'email', 'phone'];
+    const required = ['fullName', 'billingAddress', 'address', 'email', 'phone'];
     return required.every(field => formData[field as keyof typeof formData].trim() !== '');
   };
 
@@ -40,18 +44,6 @@ const CustomerInfo = () => {
     const itemsList = order.items.map(item => 
       `${item.item.name} (Code: ${item.item.itemCode || 'N/A'}) - Qty: ${item.quantity} - Rs ${(item.item.price * item.quantity).toFixed(2)}`
     ).join('\n');
-
-    const paperColors = DataService.getPaperColors();
-    const selectedColorNames = order.selectedPaperColors
-      .filter(colorId => colorId !== 'mix-colors')
-      .map(colorId => {
-        const color = paperColors.find(c => c.id === colorId);
-        return color ? color.name : colorId;
-      });
-    
-    const colorInfo = selectedColorNames.length > 0 
-      ? `${selectedColorNames.join(', ')}${order.selectedPaperColors.includes('mix-colors') ? ' (Mix Colors)' : ''}`
-      : 'No paper colors selected';
 
     const boxFills = DataService.getBoxFills();
     const selectedFillNames = order.selectedBoxFills.map(fillId => {
@@ -75,10 +67,11 @@ const CustomerInfo = () => {
       from_email: formData.email,
       phone: formData.phone,
       address: formData.address,
+      billing_address: formData.billingAddress,
       comment: formData.comment || 'No additional comments',
       delivery_date: deliveryDate || 'Not specified',
       greeting_card: order.greetingCard ? `${order.greetingCard.name} - Rs ${order.greetingCard.price.toFixed(2)}` : 'No greeting card selected',
-      paper_fill_color: `Paper Colors: ${colorInfo}\nBox Fills: ${fillInfo}`,
+      paper_fill_color: `Box Fills: ${fillInfo}`,
       cart_items: cartItemsWithTotal,
       attachment: order.receiptFile ? `Receipt uploaded: ${order.receiptFile.name}` : 'No receipt uploaded'
     };
@@ -195,6 +188,17 @@ const CustomerInfo = () => {
               </div>
 
               <div>
+                <Label htmlFor="billingAddress">Billing Address *</Label>
+                <Textarea 
+                  id="billingAddress" 
+                  value={formData.billingAddress} 
+                  onChange={e => handleInputChange('billingAddress', e.target.value)} 
+                  placeholder="Enter your billing address" 
+                  rows={3} 
+                />
+              </div>
+
+              <div>
                 <Label htmlFor="address">Delivery Address *</Label>
                 <Textarea 
                   id="address" 
@@ -283,22 +287,6 @@ const CustomerInfo = () => {
                 <p className="text-sm">{order.paymentMethod === 'cash' ? 'Cash on Delivery' : 'Bank Transfer'}</p>
                 {order.receiptFile && <p className="text-sm text-green-600 mt-1">Receipt uploaded: {order.receiptFile.name}</p>}
               </div>
-
-              {order.selectedPaperColors.length > 0 && (
-                <div className="bg-primary-50 p-3 rounded mt-4">
-                  <p className="text-sm font-medium text-primary-700">Paper Colors:</p>
-                  <div className="flex flex-wrap gap-1 mt-1">
-                    {order.selectedPaperColors.filter(colorId => colorId !== 'mix-colors').map(colorId => {
-                      const paperColors = DataService.getPaperColors();
-                      const color = paperColors.find(c => c.id === colorId);
-                      return color ? <span key={colorId} className="text-xs bg-white px-2 py-1 rounded">
-                            {color.name}
-                          </span> : null;
-                    })}
-                    {order.selectedPaperColors.includes('mix-colors') && <span className="text-xs bg-primary-100 px-2 py-1 rounded">Mix Colors</span>}
-                  </div>
-                </div>
-              )}
             </div>
           </CardContent>
         </Card>
