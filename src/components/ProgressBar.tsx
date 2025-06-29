@@ -32,8 +32,6 @@ const ProgressBar = ({
     number: 6
   }];
   const currentStepIndex = steps.findIndex(step => step.key === currentStep);
-  return <div className="bg-white shadow-sm border-b sticky top-[140px] z-30">
-      
-    </div>;
+  return;
 };
 export default ProgressBar;
