@@ -19,7 +19,7 @@ const SelectGreetingCard = () => {
         <p className="text-gray-600">Add a personal touch with a beautiful greeting card</p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
         {mockGreetingCards.map((card) => (
           <Card 
             key={card.id} 

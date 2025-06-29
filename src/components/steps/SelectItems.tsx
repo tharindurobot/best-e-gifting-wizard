@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { AspectRatio } from '@/components/ui/aspect-ratio';
 import { useOrder } from '@/context/OrderContext';
-import { DataService } from '@/services/dataService';
+import { mockItems } from '@/data/mockData';
 import { Item } from '@/types';
 
 const CATEGORIES = [
@@ -27,41 +27,21 @@ const SelectItems = () => {
     addItem,
     updateItemQuantity,
     removeItem,
-    setCurrentStep,
     order
   } = useOrder();
   const [quantities, setQuantities] = useState<{[key: string]: number}>({});
-  const [items, setItems] = useState<Item[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string>('');
   const [selectedItems, setSelectedItems] = useState<Set<string>>(new Set());
 
   useEffect(() => {
-    loadItems();
-  }, []);
-
-  useEffect(() => {
-    const handleStorageChange = () => {
-      loadItems();
-    };
-    window.addEventListener('storage', handleStorageChange);
-    window.addEventListener('adminDataUpdate', handleStorageChange);
-    return () => {
-      window.removeEventListener('storage', handleStorageChange);
-      window.removeEventListener('adminDataUpdate', handleStorageChange);
-    };
-  }, []);
-
-  const loadItems = () => {
-    const storedItems = DataService.getItems();
-    setItems(storedItems);
     // Set default category to first available category with items
     const categoriesWithItems = CATEGORIES.filter(category => 
-      storedItems.some(item => item.category === category)
+      mockItems.some(item => item.category === category)
     );
     if (categoriesWithItems.length > 0 && !selectedCategory) {
       setSelectedCategory(categoriesWithItems[0]);
     }
-  };
+  }, [selectedCategory]);
 
   const handleQuantityChange = (itemId: string, quantity: number) => {
     setQuantities(prev => ({
@@ -94,12 +74,12 @@ const SelectItems = () => {
     return cartItem ? cartItem.quantity : 0;
   };
 
-  const filteredItems = items.filter(item => 
+  const filteredItems = mockItems.filter(item => 
     selectedCategory ? item.category === selectedCategory : true
   );
 
   const categoriesWithItems = CATEGORIES.filter(category => 
-    items.some(item => item.category === category)
+    mockItems.some(item => item.category === category)
   );
 
   return (

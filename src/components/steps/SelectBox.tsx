@@ -1,10 +1,9 @@
 
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { useOrder } from '@/context/OrderContext';
-import { DataService } from '@/services/dataService';
-import { Box } from '@/types';
+import { mockBoxes } from '@/data/mockData';
 
 const SelectBox = () => {
   const {
@@ -12,31 +11,8 @@ const SelectBox = () => {
     setCurrentStep,
     order
   } = useOrder();
-  const [boxes, setBoxes] = useState<Box[]>([]);
 
-  useEffect(() => {
-    loadBoxes();
-  }, []);
-
-  // Listen for storage changes
-  useEffect(() => {
-    const handleStorageChange = () => {
-      loadBoxes();
-    };
-    window.addEventListener('storage', handleStorageChange);
-    window.addEventListener('adminDataUpdate', handleStorageChange);
-    return () => {
-      window.removeEventListener('storage', handleStorageChange);
-      window.removeEventListener('adminDataUpdate', handleStorageChange);
-    };
-  }, []);
-
-  const loadBoxes = () => {
-    const storedBoxes = DataService.getBoxes();
-    setBoxes(storedBoxes);
-  };
-
-  const handleSelectBox = (box: Box) => {
+  const handleSelectBox = (box: typeof mockBoxes[0]) => {
     selectBox(box);
   };
 
@@ -53,8 +29,8 @@ const SelectBox = () => {
         <p className="text-gray-600">Select the perfect box for your special gift</p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {boxes.map(box => (
+      <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        {mockBoxes.map(box => (
           <Card 
             key={box.id} 
             className={`cursor-pointer transition-all duration-300 hover:shadow-lg ${
