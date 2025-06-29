@@ -1,3 +1,4 @@
+
 export interface Box {
   id: string;
   name: string;
@@ -51,6 +52,7 @@ export interface Order {
   paymentMethod: 'cash' | 'bank';
   customerInfo: {
     fullName: string;
+    billingAddress: string;
     address: string;
     email: string;
     phone: string;
