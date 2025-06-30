@@ -10,6 +10,7 @@ import { mockItems } from '@/data/mockData';
 import { Item } from '@/types';
 
 const CATEGORIES = [
+  'All Products',
   'Stationery',
   'Flowers', 
   'Soft Toys',
@@ -30,18 +31,8 @@ const SelectItems = () => {
     order
   } = useOrder();
   const [quantities, setQuantities] = useState<{[key: string]: number}>({});
-  const [selectedCategory, setSelectedCategory] = useState<string>('');
+  const [selectedCategory, setSelectedCategory] = useState<string>('All Products');
   const [selectedItems, setSelectedItems] = useState<Set<string>>(new Set());
-
-  useEffect(() => {
-    // Set default category to first available category with items
-    const categoriesWithItems = CATEGORIES.filter(category => 
-      mockItems.some(item => item.category === category)
-    );
-    if (categoriesWithItems.length > 0 && !selectedCategory) {
-      setSelectedCategory(categoriesWithItems[0]);
-    }
-  }, [selectedCategory]);
 
   const handleQuantityChange = (itemId: string, quantity: number) => {
     setQuantities(prev => ({
@@ -75,11 +66,11 @@ const SelectItems = () => {
   };
 
   const filteredItems = mockItems.filter(item => 
-    selectedCategory ? item.category === selectedCategory : true
+    selectedCategory === 'All Products' || item.category === selectedCategory
   );
 
   const categoriesWithItems = CATEGORIES.filter(category => 
-    mockItems.some(item => item.category === category)
+    category === 'All Products' || mockItems.some(item => item.category === category)
   );
 
   return (
