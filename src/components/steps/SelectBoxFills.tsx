@@ -3,10 +3,12 @@ import React, { useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
 import { useOrder } from '@/context/OrderContext';
-import { mockBoxFills } from '@/data/mockData';
+import { useBoxFills } from '@/hooks/useSupabaseData';
+import { Loader2 } from 'lucide-react';
 
 const SelectBoxFills = () => {
   const { order, setSelectedBoxFills } = useOrder();
+  const { data: boxFills = [], isLoading, error } = useBoxFills();
   const [selectedFills, setSelectedFills] = useState<string[]>(order.selectedBoxFills);
 
   const handleFillToggle = (fillId: string) => {
@@ -18,6 +20,23 @@ const SelectBoxFills = () => {
     setSelectedBoxFills(newSelectedFills);
   };
 
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center py-12">
+        <Loader2 className="h-8 w-8 animate-spin" />
+        <span className="ml-2">Loading box fills...</span>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="text-center py-12">
+        <p className="text-red-500">Error loading box fills. Please try again.</p>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-6">
       <div className="text-center">
@@ -26,7 +45,7 @@ const SelectBoxFills = () => {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {mockBoxFills.map((fill) => (
+        {boxFills.map((fill) => (
           <Card 
             key={fill.id} 
             className={`cursor-pointer transition-all duration-300 hover:shadow-lg relative overflow-hidden ${
@@ -66,7 +85,7 @@ const SelectBoxFills = () => {
           <h3 className="font-semibold text-primary-700 mb-2">Selected Box Fills:</h3>
           <div className="flex flex-wrap gap-2">
             {selectedFills.map((fillId) => {
-              const fill = mockBoxFills.find(f => f.id === fillId);
+              const fill = boxFills.find(f => f.id === fillId);
               return fill ? (
                 <span key={fillId} className="bg-primary-100 text-primary-700 px-3 py-1 rounded-full text-sm">
                   {fill.name} ✓

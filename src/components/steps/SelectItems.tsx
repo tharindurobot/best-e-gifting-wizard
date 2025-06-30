@@ -1,13 +1,12 @@
-
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { AspectRatio } from '@/components/ui/aspect-ratio';
-import { Search } from 'lucide-react';
+import { Search, Loader2 } from 'lucide-react';
 import { useOrder } from '@/context/OrderContext';
-import { mockItems } from '@/data/mockData';
+import { useItems } from '@/hooks/useSupabaseData';
 import { Item } from '@/types';
 
 const CATEGORIES = [
@@ -31,12 +30,8 @@ const SORT_OPTIONS = [
 ];
 
 const SelectItems = () => {
-  const {
-    addItem,
-    updateItemQuantity,
-    removeItem,
-    order
-  } = useOrder();
+  const { addItem, updateItemQuantity, removeItem, order } = useOrder();
+  const { data: items = [], isLoading, error } = useItems();
   const [quantities, setQuantities] = useState<{[key: string]: number}>({});
   const [selectedCategory, setSelectedCategory] = useState<string>('All Products');
   const [selectedItems, setSelectedItems] = useState<Set<string>>(new Set());
@@ -77,13 +72,13 @@ const SelectItems = () => {
   // Filter and sort items
   const getFilteredAndSortedItems = () => {
     // First filter by category
-    let items = mockItems.filter(item => 
+    let filteredItems = items.filter(item => 
       selectedCategory === 'All Products' || item.category === selectedCategory
     );
 
     // Then filter by search query
     if (searchQuery.trim()) {
-      items = items.filter(item =>
+      filteredItems = filteredItems.filter(item =>
         item.name.toLowerCase().includes(searchQuery.toLowerCase())
       );
     }
@@ -91,26 +86,42 @@ const SelectItems = () => {
     // Finally sort the results
     switch (sortBy) {
       case 'name-asc':
-        items.sort((a, b) => a.name.localeCompare(b.name));
+        filteredItems.sort((a, b) => a.name.localeCompare(b.name));
         break;
       case 'price-asc':
-        items.sort((a, b) => a.price - b.price);
+        filteredItems.sort((a, b) => a.price - b.price);
         break;
       case 'price-desc':
-        items.sort((a, b) => b.price - a.price);
+        filteredItems.sort((a, b) => b.price - a.price);
         break;
       default:
         break;
     }
 
-    return items;
+    return filteredItems;
   };
 
   const filteredItems = getFilteredAndSortedItems();
-
   const categoriesWithItems = CATEGORIES.filter(category => 
-    category === 'All Products' || mockItems.some(item => item.category === category)
+    category === 'All Products' || items.some(item => item.category === category)
   );
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center py-12">
+        <Loader2 className="h-8 w-8 animate-spin" />
+        <span className="ml-2">Loading items...</span>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="text-center py-12">
+        <p className="text-red-500">Error loading items. Please try again.</p>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">

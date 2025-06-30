@@ -3,14 +3,33 @@ import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { useOrder } from '@/context/OrderContext';
-import { mockGreetingCards } from '@/data/mockData';
+import { useGreetingCards } from '@/hooks/useSupabaseData';
+import { Loader2 } from 'lucide-react';
 
 const SelectGreetingCard = () => {
   const { selectGreetingCard, order } = useOrder();
+  const { data: greetingCards = [], isLoading, error } = useGreetingCards();
 
-  const handleSelectCard = (card: typeof mockGreetingCards[0]) => {
+  const handleSelectCard = (card: typeof greetingCards[0]) => {
     selectGreetingCard(card);
   };
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center py-12">
+        <Loader2 className="h-8 w-8 animate-spin" />
+        <span className="ml-2">Loading greeting cards...</span>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="text-center py-12">
+        <p className="text-red-500">Error loading greeting cards. Please try again.</p>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -20,7 +39,7 @@ const SelectGreetingCard = () => {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
-        {mockGreetingCards.map((card) => (
+        {greetingCards.map((card) => (
           <Card 
             key={card.id} 
             className={`cursor-pointer transition-all duration-300 hover:shadow-lg ${

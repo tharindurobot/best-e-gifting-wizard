@@ -9,7 +9,150 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      [_ in never]: never
+      box_fills: {
+        Row: {
+          created_at: string | null
+          id: string
+          image: string
+          is_free: boolean | null
+          is_visible: boolean | null
+          name: string
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          image: string
+          is_free?: boolean | null
+          is_visible?: boolean | null
+          name: string
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          image?: string
+          is_free?: boolean | null
+          is_visible?: boolean | null
+          name?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      boxes: {
+        Row: {
+          color: string
+          created_at: string | null
+          id: string
+          image: string
+          name: string
+          paper_fills: boolean | null
+          price: number
+          updated_at: string | null
+        }
+        Insert: {
+          color: string
+          created_at?: string | null
+          id?: string
+          image: string
+          name: string
+          paper_fills?: boolean | null
+          price: number
+          updated_at?: string | null
+        }
+        Update: {
+          color?: string
+          created_at?: string | null
+          id?: string
+          image?: string
+          name?: string
+          paper_fills?: boolean | null
+          price?: number
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      greeting_cards: {
+        Row: {
+          created_at: string | null
+          id: string
+          image: string
+          name: string
+          price: number
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          image: string
+          name: string
+          price: number
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          image?: string
+          name?: string
+          price?: number
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      items: {
+        Row: {
+          category: string
+          created_at: string | null
+          id: string
+          image: string
+          item_code: string
+          name: string
+          price: number
+          updated_at: string | null
+        }
+        Insert: {
+          category: string
+          created_at?: string | null
+          id?: string
+          image: string
+          item_code: string
+          name: string
+          price: number
+          updated_at?: string | null
+        }
+        Update: {
+          category?: string
+          created_at?: string | null
+          id?: string
+          image?: string
+          item_code?: string
+          name?: string
+          price?: number
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      paper_colors: {
+        Row: {
+          color_code: string
+          created_at: string | null
+          id: string
+          name: string
+        }
+        Insert: {
+          color_code: string
+          created_at?: string | null
+          id?: string
+          name: string
+        }
+        Update: {
+          color_code?: string
+          created_at?: string | null
+          id?: string
+          name?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
