@@ -45,6 +45,11 @@ const Home = () => {
 
       <NavigationFooter />
       <ScrollToTopButton />
+      
+      {/* Copyright Caption */}
+      <div className="text-center pt-4 pb-6 px-4 text-sm text-gray-600">
+        © 2025 All rights reserved. Designed & developed by Tharindu Dilshan – CV MART.
+      </div>
     </div>
   );
 };
