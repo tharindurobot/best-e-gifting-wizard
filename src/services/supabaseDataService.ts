@@ -171,7 +171,7 @@ export class SupabaseDataService {
     const { data, error } = await supabase
       .from('box_fills')
       .select('*')
-      .where('is_visible', 'eq', true)
+      .eq('is_visible', true)
       .order('name');
     
     if (error) {
