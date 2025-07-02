@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useOrder } from '@/context/OrderContext';
 import { Button } from '@/components/ui/button';
@@ -13,19 +12,18 @@ import PaymentMethod from '@/components/steps/PaymentMethod';
 import CustomerInfo from '@/components/steps/CustomerInfo';
 import NavigationFooter from '@/components/NavigationFooter';
 import ScrollToTopButton from '@/components/ScrollToTopButton';
-
 const Home = () => {
-  const { currentStep } = useOrder();
+  const {
+    currentStep
+  } = useOrder();
   const [isMigrating, setIsMigrating] = useState(false);
   const [migrationComplete, setMigrationComplete] = useState(false);
-
   const handleMigration = async () => {
     setIsMigrating(true);
     await migrateDataToSupabase();
     setIsMigrating(false);
     setMigrationComplete(true);
   };
-
   const renderStep = () => {
     switch (currentStep) {
       case 'box':
@@ -44,29 +42,13 @@ const Home = () => {
         return <SelectBox />;
     }
   };
-
-  return (
-    <div className="min-h-screen bg-gray-50">
+  return <div className="min-h-screen bg-gray-50">
       <Header />
       <ProgressBar currentStep={currentStep} />
       
-      {!migrationComplete && (
-        <div className="container mx-auto px-4 py-6">
-          <div className="text-center bg-blue-50 p-6 rounded-lg mb-6">
-            <h3 className="text-lg font-semibold mb-2">Initialize Database</h3>
-            <p className="text-gray-600 mb-4">
-              Click the button below to populate your database with sample data.
-            </p>
-            <Button 
-              onClick={handleMigration} 
-              disabled={isMigrating}
-              className="min-w-32"
-            >
-              {isMigrating ? 'Migrating...' : 'Initialize Data'}
-            </Button>
-          </div>
-        </div>
-      )}
+      {!migrationComplete && <div className="container mx-auto px-4 py-6">
+          
+        </div>}
       
       <main className="container mx-auto px-4 pb-24">
         {renderStep()}
@@ -79,8 +61,6 @@ const Home = () => {
       <div className="text-center pt-4 pb-6 px-4 text-sm text-gray-600">
         © 2025 All rights reserved. Designed & developed by Tharindu Dilshan – CV MART.
       </div>
-    </div>
-  );
+    </div>;
 };
-
 export default Home;
