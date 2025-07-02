@@ -1,6 +1,6 @@
 
 import { supabase } from '@/integrations/supabase/client';
-import { Box, Item, GreetingCard, PaperColor, BoxFill } from '@/types';
+import { Box, Item, GreetingCard, PaperColor, BoxFill, DatabaseOrder } from '@/types';
 
 export class SupabaseDataService {
   // Boxes
@@ -70,8 +70,7 @@ export class SupabaseDataService {
       name: item.name,
       category: item.category,
       price: Number(item.price),
-      image: item.image,
-      itemCode: item.item_code
+      image: item.image
     })) || [];
   }
 
@@ -82,8 +81,7 @@ export class SupabaseDataService {
         name: item.name,
         category: item.category,
         price: item.price,
-        image: item.image,
-        item_code: item.itemCode
+        image: item.image
       })
       .select()
       .single();
@@ -98,8 +96,7 @@ export class SupabaseDataService {
       name: data.name,
       category: data.category,
       price: Number(data.price),
-      image: data.image,
-      itemCode: data.item_code
+      image: data.image
     };
   }
 
@@ -212,5 +209,87 @@ export class SupabaseDataService {
       isFree: data.is_free,
       isVisible: data.is_visible
     };
+  }
+
+  // Orders
+  static async saveOrder(orderData: {
+    customerName: string;
+    customerEmail: string;
+    customerPhone: string;
+    billingAddress: string;
+    deliveryAddress: string;
+    deliveryDate: string;
+    comment?: string;
+    selectedBox: any;
+    selectedItems: any;
+    greetingCard?: any;
+    totalAmount: number;
+    paymentMethod: 'cash' | 'bank';
+    bankSlipUrl?: string;
+  }): Promise<DatabaseOrder | null> {
+    const { data, error } = await supabase
+      .from('orders')
+      .insert({
+        customer_name: orderData.customerName,
+        customer_email: orderData.customerEmail,
+        customer_phone: orderData.customerPhone,
+        billing_address: orderData.billingAddress,
+        delivery_address: orderData.deliveryAddress,
+        delivery_date: orderData.deliveryDate,
+        comment: orderData.comment,
+        selected_box: orderData.selectedBox,
+        selected_items: orderData.selectedItems,
+        greeting_card: orderData.greetingCard,
+        total_amount: orderData.totalAmount,
+        payment_method: orderData.paymentMethod,
+        bank_slip_url: orderData.bankSlipUrl
+      })
+      .select()
+      .single();
+    
+    if (error) {
+      console.error('Error saving order:', error);
+      return null;
+    }
+    
+    return {
+      id: data.id,
+      customer_name: data.customer_name,
+      customer_email: data.customer_email,
+      customer_phone: data.customer_phone,
+      billing_address: data.billing_address,
+      delivery_address: data.delivery_address,
+      delivery_date: data.delivery_date,
+      comment: data.comment,
+      selected_box: data.selected_box,
+      selected_items: data.selected_items,
+      greeting_card: data.greeting_card,
+      total_amount: data.total_amount,
+      payment_method: data.payment_method,
+      bank_slip_url: data.bank_slip_url,
+      order_date: data.order_date,
+      created_at: data.created_at
+    };
+  }
+
+  // File Upload for Bank Slips
+  static async uploadBankSlip(file: File): Promise<string | null> {
+    const fileExt = file.name.split('.').pop();
+    const fileName = `${Date.now()}-${Math.random().toString(36).substring(2)}.${fileExt}`;
+    
+    const { error } = await supabase.storage
+      .from('bank-slips')
+      .upload(fileName, file);
+    
+    if (error) {
+      console.error('Error uploading bank slip:', error);
+      return null;
+    }
+    
+    const { data } = supabase.storage
+      .from('bank-slips')
+      .getPublicUrl(fileName);
+    
+    return data.publicUrl;
   }
 }

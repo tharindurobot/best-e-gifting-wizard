@@ -105,7 +105,6 @@ export type Database = {
           created_at: string | null
           id: string
           image: string
-          item_code: string
           name: string
           price: number
           updated_at: string | null
@@ -115,7 +114,6 @@ export type Database = {
           created_at?: string | null
           id?: string
           image: string
-          item_code: string
           name: string
           price: number
           updated_at?: string | null
@@ -125,10 +123,66 @@ export type Database = {
           created_at?: string | null
           id?: string
           image?: string
-          item_code?: string
           name?: string
           price?: number
           updated_at?: string | null
+        }
+        Relationships: []
+      }
+      orders: {
+        Row: {
+          bank_slip_url: string | null
+          billing_address: string
+          comment: string | null
+          created_at: string | null
+          customer_email: string
+          customer_name: string
+          customer_phone: string
+          delivery_address: string
+          delivery_date: string
+          greeting_card: Json | null
+          id: string
+          order_date: string | null
+          payment_method: string
+          selected_box: Json
+          selected_items: Json
+          total_amount: number
+        }
+        Insert: {
+          bank_slip_url?: string | null
+          billing_address: string
+          comment?: string | null
+          created_at?: string | null
+          customer_email: string
+          customer_name: string
+          customer_phone: string
+          delivery_address: string
+          delivery_date: string
+          greeting_card?: Json | null
+          id?: string
+          order_date?: string | null
+          payment_method: string
+          selected_box: Json
+          selected_items: Json
+          total_amount: number
+        }
+        Update: {
+          bank_slip_url?: string | null
+          billing_address?: string
+          comment?: string | null
+          created_at?: string | null
+          customer_email?: string
+          customer_name?: string
+          customer_phone?: string
+          delivery_address?: string
+          delivery_date?: string
+          greeting_card?: Json | null
+          id?: string
+          order_date?: string | null
+          payment_method?: string
+          selected_box?: Json
+          selected_items?: Json
+          total_amount?: number
         }
         Relationships: []
       }

@@ -1,3 +1,4 @@
+
 import { Box, Item, GreetingCard, PaperColor, DEFAULT_PAPER_COLORS, BoxFill } from '@/types';
 import { mockBoxes, mockItems, mockGreetingCards, mockBoxFills } from '@/data/mockData';
 
@@ -16,12 +17,15 @@ export class DataService {
       localStorage.setItem(STORAGE_KEYS.BOXES, JSON.stringify(mockBoxes));
     }
     if (!localStorage.getItem(STORAGE_KEYS.ITEMS)) {
-      // Add item codes to existing mock items
-      const itemsWithCodes = mockItems.map((item, index) => ({
-        ...item,
-        itemCode: `ITM-${String(index + 1).padStart(3, '0')}`
+      // Remove item codes from mock items
+      const itemsWithoutCodes = mockItems.map(item => ({
+        id: item.id,
+        name: item.name,
+        category: item.category,
+        price: item.price,
+        image: item.image
       }));
-      localStorage.setItem(STORAGE_KEYS.ITEMS, JSON.stringify(itemsWithCodes));
+      localStorage.setItem(STORAGE_KEYS.ITEMS, JSON.stringify(itemsWithoutCodes));
     }
     if (!localStorage.getItem(STORAGE_KEYS.CARDS)) {
       localStorage.setItem(STORAGE_KEYS.CARDS, JSON.stringify(mockGreetingCards));
@@ -32,16 +36,6 @@ export class DataService {
     if (!localStorage.getItem(STORAGE_KEYS.BOX_FILLS)) {
       localStorage.setItem(STORAGE_KEYS.BOX_FILLS, JSON.stringify(mockBoxFills));
     }
-  }
-
-  // Generate next item code
-  static generateItemCode(): string {
-    const items = this.getItems();
-    const maxCode = items.reduce((max, item) => {
-      const codeNum = parseInt(item.itemCode.replace('ITM-', ''));
-      return codeNum > max ? codeNum : max;
-    }, 0);
-    return `ITM-${String(maxCode + 1).padStart(3, '0')}`;
   }
 
   // Boxes

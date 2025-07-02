@@ -14,7 +14,6 @@ export interface Item {
   category: string;
   price: number;
   image: string;
-  itemCode: string;
 }
 
 export interface GreetingCard {
@@ -62,10 +61,29 @@ export interface Order {
   total: number;
 }
 
+export interface DatabaseOrder {
+  id: string;
+  customer_name: string;
+  customer_email: string;
+  customer_phone: string;
+  billing_address: string;
+  delivery_address: string;
+  delivery_date: string;
+  comment?: string;
+  selected_box: any;
+  selected_items: any;
+  greeting_card?: any;
+  total_amount: number;
+  payment_method: 'cash' | 'bank';
+  bank_slip_url?: string;
+  order_date: string;
+  created_at: string;
+}
+
 export type OrderStep = 'box' | 'items' | 'fills' | 'card' | 'payment' | 'info';
 
 export const ITEM_CATEGORIES = [
-  'Stationary',
+  'Stationery',
   'Flowers', 
   'Soft Toys',
   'Women Accessories',

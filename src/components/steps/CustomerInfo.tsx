@@ -8,6 +8,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { useOrder } from '@/context/OrderContext';
 import { useToast } from '@/hooks/use-toast';
 import { DataService } from '@/services/dataService';
+import { SupabaseDataService } from '@/services/supabaseDataService';
 import emailjs from '@emailjs/browser';
 
 const CustomerInfo = () => {
@@ -37,12 +38,13 @@ const CustomerInfo = () => {
 
   const validateForm = () => {
     const required = ['fullName', 'billingAddress', 'address', 'email', 'phone'];
-    return required.every(field => formData[field as keyof typeof formData].trim() !== '');
+    const hasDeliveryDate = deliveryDate.trim() !== '';
+    return required.every(field => formData[field as keyof typeof formData].trim() !== '') && hasDeliveryDate;
   };
 
   const prepareOrderData = () => {
     const itemsList = order.items.map(item => 
-      `${item.item.name} (Code: ${item.item.itemCode || 'N/A'}) - Qty: ${item.quantity} - Rs ${(item.item.price * item.quantity).toFixed(2)}`
+      `${item.item.name} - Qty: ${item.quantity} - Rs ${(item.item.price * item.quantity).toFixed(2)}`
     ).join('\n');
 
     const boxFills = DataService.getBoxFills();
@@ -56,7 +58,7 @@ const CustomerInfo = () => {
 
     // Format cart items with total
     const cartItemsWithTotal = order.items.map(item => 
-      `${item.item.name} (Code: ${item.item.itemCode || 'N/A'}) - Qty: ${item.quantity} - Rs ${(item.item.price * item.quantity).toFixed(2)}`
+      `${item.item.name} - Qty: ${item.quantity} - Rs ${(item.item.price * item.quantity).toFixed(2)}`
     ).join('\n') + 
     (order.box ? `\n${order.box.name} (${order.box.color}) - Rs ${order.box.price.toFixed(2)}` : '') +
     (order.greetingCard ? `\n${order.greetingCard.name} - Rs ${order.greetingCard.price.toFixed(2)}` : '') +
@@ -81,7 +83,7 @@ const CustomerInfo = () => {
     if (!validateForm()) {
       toast({
         title: "Missing Information",
-        description: "Please fill in all required fields",
+        description: "Please fill in all required fields including delivery date",
         variant: "destructive"
       });
       return;
@@ -90,15 +92,47 @@ const CustomerInfo = () => {
     setIsSubmitting(true);
     
     try {
-      const orderData = prepareOrderData();
+      // Upload bank slip if provided
+      let bankSlipUrl = null;
+      if (order.receiptFile) {
+        bankSlipUrl = await SupabaseDataService.uploadBankSlip(order.receiptFile);
+        if (!bankSlipUrl) {
+          throw new Error('Failed to upload bank slip');
+        }
+      }
+
+      // Save order to database
+      const orderData = {
+        customerName: formData.fullName,
+        customerEmail: formData.email,
+        customerPhone: formData.phone,
+        billingAddress: formData.billingAddress,
+        deliveryAddress: formData.address,
+        deliveryDate: deliveryDate,
+        comment: formData.comment,
+        selectedBox: order.box,
+        selectedItems: order.items,
+        greetingCard: order.greetingCard,
+        totalAmount: getTotalPrice(),
+        paymentMethod: order.paymentMethod,
+        bankSlipUrl: bankSlipUrl
+      };
+
+      const savedOrder = await SupabaseDataService.saveOrder(orderData);
+      if (!savedOrder) {
+        throw new Error('Failed to save order to database');
+      }
+
+      console.log('Order saved to database:', savedOrder);
+
+      // Send email using EmailJS as backup
+      const emailData = prepareOrderData();
+      console.log('Sending order data via email:', emailData);
       
-      console.log('Sending order data:', orderData);
-      
-      // Send email using EmailJS with new template
       const result = await emailjs.send(
         'service_lbcjmx8',
         'template_whj0geq',
-        orderData,
+        emailData,
         'sTY75PlHXv2X4CpeY'
       );
 
@@ -106,7 +140,7 @@ const CustomerInfo = () => {
 
       toast({
         title: "Order Placed Successfully!",
-        description: "Your order has been sent to our shop and will be processed soon."
+        description: "Your order has been saved and sent to our shop. You will receive a confirmation email shortly."
       });
 
       // Reset order after successful submission
@@ -115,12 +149,11 @@ const CustomerInfo = () => {
       }, 3000);
 
     } catch (error) {
-      console.error('Email send failed:', error);
+      console.error('Order submission failed:', error);
       
-      // Show more specific error message
       const errorMessage = error && typeof error === 'object' && 'text' in error 
         ? error.text 
-        : "There was an error placing your order. Please try again.";
+        : error instanceof Error ? error.message : "There was an error placing your order. Please try again.";
       
       toast({
         title: "Order Failed",
@@ -210,12 +243,13 @@ const CustomerInfo = () => {
               </div>
 
               <div>
-                <Label htmlFor="deliveryDate">Preferred Delivery Date (Optional)</Label>
+                <Label htmlFor="deliveryDate">Delivery Date *</Label>
                 <Input 
                   id="deliveryDate" 
                   type="date"
                   value={deliveryDate} 
                   onChange={e => setDeliveryDate(e.target.value)} 
+                  required
                 />
               </div>
 
@@ -248,7 +282,7 @@ const CustomerInfo = () => {
 
               {order.items.map(cartItem => (
                 <div key={cartItem.item.id} className="flex justify-between text-sm">
-                  <span>{cartItem.item.name} ({cartItem.item.itemCode}) (x{cartItem.quantity})</span>
+                  <span>{cartItem.item.name} (x{cartItem.quantity})</span>
                   <span>Rs {(cartItem.item.price * cartItem.quantity).toFixed(2)}</span>
                 </div>
               ))}
