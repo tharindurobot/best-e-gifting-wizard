@@ -16,8 +16,7 @@ const ItemManagement = () => {
     name: '',
     category: '',
     price: 0,
-    image: '',
-    itemCode: ''
+    image: ''
   });
 
   useEffect(() => {
@@ -40,8 +39,7 @@ const ItemManagement = () => {
       name: item.name,
       category: item.category,
       price: item.price,
-      image: item.image,
-      itemCode: item.itemCode
+      image: item.image
     });
   };
 
@@ -58,8 +56,7 @@ const ItemManagement = () => {
     } else {
       const newItem: Item = {
         id: Date.now().toString(),
-        ...formData,
-        itemCode: formData.itemCode || DataService.generateItemCode()
+        ...formData
       };
       updatedItems = [...items, newItem];
       console.log('Added new item:', newItem);
@@ -70,7 +67,7 @@ const ItemManagement = () => {
     notifyDataUpdate();
     
     setEditingItem(null);
-    setFormData({ name: '', category: '', price: 0, image: '', itemCode: '' });
+    setFormData({ name: '', category: '', price: 0, image: '' });
   };
 
   const handleDelete = (id: string) => {
@@ -83,7 +80,7 @@ const ItemManagement = () => {
 
   const handleCancel = () => {
     setEditingItem(null);
-    setFormData({ name: '', category: '', price: 0, image: '', itemCode: '' });
+    setFormData({ name: '', category: '', price: 0, image: '' });
   };
 
   return (
@@ -101,15 +98,6 @@ const ItemManagement = () => {
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                 placeholder="Enter item name"
-              />
-            </div>
-            <div>
-              <Label htmlFor="itemCode">Item Code</Label>
-              <Input
-                id="itemCode"
-                value={formData.itemCode}
-                onChange={(e) => setFormData({ ...formData, itemCode: e.target.value })}
-                placeholder={editingItem ? "Current code" : "Auto-generated if empty"}
               />
             </div>
             <div>
@@ -179,7 +167,6 @@ const ItemManagement = () => {
                         />
                       </AspectRatio>
                       <h4 className="font-semibold">{item.name}</h4>
-                      <p className="text-sm text-gray-600">Code: {item.itemCode}</p>
                       <p className="text-sm text-gray-600">{item.category}</p>
                       <p className="text-lg font-bold text-primary-600">Rs {item.price.toFixed(2)}</p>
                       <div className="flex gap-2 mt-3">

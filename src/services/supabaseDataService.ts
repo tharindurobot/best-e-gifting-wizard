@@ -241,7 +241,7 @@ export class SupabaseDataService {
         selected_items: orderData.selectedItems,
         greeting_card: orderData.greetingCard,
         total_amount: orderData.totalAmount,
-        payment_method: orderData.paymentMethod,
+        payment_method: orderData.paymentMethod as 'cash' | 'bank',
         bank_slip_url: orderData.bankSlipUrl
       })
       .select()
@@ -265,7 +265,7 @@ export class SupabaseDataService {
       selected_items: data.selected_items,
       greeting_card: data.greeting_card,
       total_amount: data.total_amount,
-      payment_method: data.payment_method,
+      payment_method: data.payment_method as 'cash' | 'bank',
       bank_slip_url: data.bank_slip_url,
       order_date: data.order_date,
       created_at: data.created_at
