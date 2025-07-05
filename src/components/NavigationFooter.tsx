@@ -1,10 +1,8 @@
-
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { useOrder } from '@/context/OrderContext';
 import { OrderStep } from '@/types';
 import { ChevronLeft, ChevronRight, MessageSquare } from 'lucide-react';
-
 const NavigationFooter = () => {
   const {
     currentStep,
@@ -12,19 +10,16 @@ const NavigationFooter = () => {
     order,
     getTotalPrice
   } = useOrder();
-
   const steps: OrderStep[] = ['box', 'items', 'fills', 'card', 'payment', 'info'];
   const currentStepIndex = steps.indexOf(currentStep);
   const canGoBack = currentStepIndex > 0;
   const canGoNext = currentStepIndex < steps.length - 1;
   const isLastStep = currentStepIndex === steps.length - 1;
-
   const handleBack = () => {
     if (canGoBack) {
       setCurrentStep(steps[currentStepIndex - 1]);
     }
   };
-
   const handleNext = () => {
     if (canGoNext) {
       setCurrentStep(steps[currentStepIndex + 1]);
@@ -35,14 +30,12 @@ const NavigationFooter = () => {
       }
     }
   };
-
   const handleWhatsAppOrder = () => {
     // Call the WhatsApp function from CustomerInfo component
     if ((window as any).handleWhatsAppOrder) {
       (window as any).handleWhatsAppOrder();
     }
   };
-
   const getStepLabel = (step: OrderStep) => {
     const labels = {
       'box': 'Choose Gift Box',
@@ -54,19 +47,11 @@ const NavigationFooter = () => {
     };
     return labels[step];
   };
-
   const isSubmitting = (window as any).isSubmitting || false;
-
-  return (
-    <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-lg z-50">
+  return <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-lg z-50">
       <div className="container mx-auto px-4 py-[7px]">
         <div className="flex items-center justify-between">
-          <Button 
-            onClick={handleBack} 
-            disabled={!canGoBack} 
-            variant="outline" 
-            className="flex items-center space-x-2 min-w-[120px]"
-          >
+          <Button onClick={handleBack} disabled={!canGoBack} variant="outline" className="flex items-center space-x-2 min-w-[120px]">
             <ChevronLeft className="w-4 h-4" />
             <span>Back</span>
           </Button>
@@ -76,38 +61,19 @@ const NavigationFooter = () => {
             <p className="font-semibold text-primary-600">{getStepLabel(currentStep)}</p>
           </div>
 
-          {isLastStep ? (
-            <div className="flex gap-2">
-              <Button 
-                onClick={handleWhatsAppOrder}
-                className="bg-green-500 hover:bg-green-600 text-white flex items-center space-x-2 min-w-[140px]"
-              >
-                <MessageSquare className="w-4 h-4" />
-                <span>WhatsApp</span>
-              </Button>
-              <Button 
-                onClick={handleNext} 
-                disabled={isSubmitting}
-                className="flex items-center space-x-2 min-w-[120px] bg-primary-600 hover:bg-primary-700"
-              >
+          {isLastStep ? <div className="flex gap-2">
+              
+              <Button onClick={handleNext} disabled={isSubmitting} className="flex items-center space-x-2 min-w-[120px] bg-primary-600 hover:bg-primary-700">
                 <span>
                   {isSubmitting ? 'Placing Order...' : 'Place Order'}
                 </span>
               </Button>
-            </div>
-          ) : (
-            <Button 
-              onClick={handleNext} 
-              className="flex items-center space-x-2 min-w-[120px] bg-primary-600 hover:bg-primary-700"
-            >
+            </div> : <Button onClick={handleNext} className="flex items-center space-x-2 min-w-[120px] bg-primary-600 hover:bg-primary-700">
               <span>Next</span>
               <ChevronRight className="w-4 h-4" />
-            </Button>
-          )}
+            </Button>}
         </div>
       </div>
-    </div>
-  );
+    </div>;
 };
-
 export default NavigationFooter;
