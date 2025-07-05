@@ -1,6 +1,5 @@
-
 import { supabase } from '@/integrations/supabase/client';
-import { Box, Item, GreetingCard, PaperColor, BoxFill, DatabaseOrder } from '@/types';
+import { Box, Item, GreetingCard, PaperColor, BoxFill, DatabaseOrder, DEFAULT_PAPER_COLORS } from '@/types';
 
 export class SupabaseDataService {
   // Boxes
@@ -144,23 +143,10 @@ export class SupabaseDataService {
     };
   }
 
-  // Paper Colors
+  // Paper Colors - Return default colors since no table exists
   static async getPaperColors(): Promise<PaperColor[]> {
-    const { data, error } = await supabase
-      .from('paper_colors')
-      .select('*')
-      .order('name');
-    
-    if (error) {
-      console.error('Error fetching paper colors:', error);
-      return [];
-    }
-    
-    return data?.map(color => ({
-      id: color.id,
-      name: color.name,
-      colorCode: color.color_code
-    })) || [];
+    // Return the default paper colors from types
+    return Promise.resolve(DEFAULT_PAPER_COLORS);
   }
 
   // Box Fills
