@@ -186,27 +186,6 @@ export type Database = {
         }
         Relationships: []
       }
-      paper_colors: {
-        Row: {
-          color_code: string
-          created_at: string | null
-          id: string
-          name: string
-        }
-        Insert: {
-          color_code: string
-          created_at?: string | null
-          id?: string
-          name: string
-        }
-        Update: {
-          color_code?: string
-          created_at?: string | null
-          id?: string
-          name?: string
-        }
-        Relationships: []
-      }
     }
     Views: {
       [_ in never]: never

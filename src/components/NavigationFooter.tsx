@@ -3,12 +3,14 @@ import React from 'react';
 import { Button } from '@/components/ui/button';
 import { useOrder } from '@/context/OrderContext';
 import { OrderStep } from '@/types';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { ChevronLeft, ChevronRight, MessageSquare } from 'lucide-react';
 
 const NavigationFooter = () => {
   const {
     currentStep,
-    setCurrentStep
+    setCurrentStep,
+    order,
+    getTotalPrice
   } = useOrder();
 
   const steps: OrderStep[] = ['box', 'items', 'fills', 'card', 'payment', 'info'];
@@ -31,6 +33,13 @@ const NavigationFooter = () => {
       if ((window as any).submitOrder) {
         (window as any).submitOrder();
       }
+    }
+  };
+
+  const handleWhatsAppOrder = () => {
+    // Call the WhatsApp function from CustomerInfo component
+    if ((window as any).handleWhatsAppOrder) {
+      (window as any).handleWhatsAppOrder();
     }
   };
 
@@ -67,19 +76,34 @@ const NavigationFooter = () => {
             <p className="font-semibold text-primary-600">{getStepLabel(currentStep)}</p>
           </div>
 
-          <Button 
-            onClick={handleNext} 
-            disabled={isLastStep && isSubmitting}
-            className="flex items-center space-x-2 min-w-[120px] bg-primary-600 hover:bg-primary-700"
-          >
-            <span>
-              {isLastStep 
-                ? (isSubmitting ? 'Placing Order...' : 'Place Order') 
-                : 'Next'
-              }
-            </span>
-            {!isLastStep && <ChevronRight className="w-4 h-4" />}
-          </Button>
+          {isLastStep ? (
+            <div className="flex gap-2">
+              <Button 
+                onClick={handleWhatsAppOrder}
+                className="bg-green-500 hover:bg-green-600 text-white flex items-center space-x-2 min-w-[140px]"
+              >
+                <MessageSquare className="w-4 h-4" />
+                <span>WhatsApp</span>
+              </Button>
+              <Button 
+                onClick={handleNext} 
+                disabled={isSubmitting}
+                className="flex items-center space-x-2 min-w-[120px] bg-primary-600 hover:bg-primary-700"
+              >
+                <span>
+                  {isSubmitting ? 'Placing Order...' : 'Place Order'}
+                </span>
+              </Button>
+            </div>
+          ) : (
+            <Button 
+              onClick={handleNext} 
+              className="flex items-center space-x-2 min-w-[120px] bg-primary-600 hover:bg-primary-700"
+            >
+              <span>Next</span>
+              <ChevronRight className="w-4 h-4" />
+            </Button>
+          )}
         </div>
       </div>
     </div>

@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -9,6 +8,7 @@ import { useOrder } from '@/context/OrderContext';
 import { useToast } from '@/hooks/use-toast';
 import { DataService } from '@/services/dataService';
 import { SupabaseDataService } from '@/services/supabaseDataService';
+import { MessageSquare } from 'lucide-react';
 import emailjs from '@emailjs/browser';
 
 const CustomerInfo = () => {
@@ -40,6 +40,84 @@ const CustomerInfo = () => {
     const required = ['fullName', 'billingAddress', 'address', 'email', 'phone'];
     const hasDeliveryDate = deliveryDate.trim() !== '';
     return required.every(field => formData[field as keyof typeof formData].trim() !== '') && hasDeliveryDate;
+  };
+
+  const prepareWhatsAppMessage = () => {
+    if (!validateForm()) {
+      toast({
+        title: "Missing Information",
+        description: "Please fill in all required fields including delivery date",
+        variant: "destructive"
+      });
+      return null;
+    }
+
+    // Prepare order items list
+    const itemsList = order.items.map(item => 
+      `• ${item.item.name} - Qty: ${item.quantity} - Rs ${(item.item.price * item.quantity).toFixed(2)}`
+    ).join('\n');
+
+    // Prepare box fills
+    const boxFills = DataService.getBoxFills();
+    const selectedFillNames = order.selectedBoxFills.map(fillId => {
+      const fill = boxFills.find(f => f.id === fillId);
+      return fill ? fill.name : fillId;
+    });
+    const fillInfo = selectedFillNames.length > 0 
+      ? selectedFillNames.join(', ') 
+      : 'No box fills selected';
+
+    // Create WhatsApp message
+    let message = `🎁 *NEW ORDER REQUEST*\n\n`;
+    
+    // Customer Information
+    message += `👤 *CUSTOMER DETAILS:*\n`;
+    message += `Name: ${formData.fullName}\n`;
+    message += `Email: ${formData.email}\n`;
+    message += `Phone: ${formData.phone}\n`;
+    message += `Billing Address: ${formData.billingAddress}\n`;
+    message += `Delivery Address: ${formData.address}\n`;
+    message += `Delivery Date: ${deliveryDate}\n`;
+    if (formData.comment) {
+      message += `Additional Comments: ${formData.comment}\n`;
+    }
+    message += `\n`;
+
+    // Order Details
+    message += `📦 *ORDER SUMMARY:*\n`;
+    if (order.box) {
+      message += `Gift Box: ${order.box.name} (${order.box.color}) - Rs ${order.box.price.toFixed(2)}\n`;
+    }
+    message += `\n*Items:*\n${itemsList}\n`;
+    
+    if (order.greetingCard) {
+      message += `\n💌 Greeting Card: ${order.greetingCard.name} - Rs ${order.greetingCard.price.toFixed(2)}\n`;
+    }
+    
+    message += `\n🎨 Box Fills: ${fillInfo}\n`;
+    
+    // Payment Information
+    message += `\n💳 *PAYMENT DETAILS:*\n`;
+    message += `Payment Method: ${order.paymentMethod === 'cash' ? 'Cash on Delivery' : 'Bank Transfer'}\n`;
+    if (order.receiptFile) {
+      message += `Bank Slip: Uploaded (${order.receiptFile.name})\n`;
+    }
+    message += `*Total Amount: Rs ${getTotalPrice().toFixed(2)}*\n`;
+    
+    message += `\n📅 Order Date: ${new Date().toLocaleString()}\n`;
+    message += `\n✅ Please confirm this order. Thank you!`;
+
+    return encodeURIComponent(message);
+  };
+
+  const handleWhatsAppOrder = () => {
+    const message = prepareWhatsAppMessage();
+    if (message) {
+      // Replace with your actual WhatsApp business number
+      const whatsappNumber = "94771234567"; // Replace with actual number
+      const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${message}`;
+      window.open(whatsappUrl, '_blank');
+    }
   };
 
   const prepareOrderData = () => {
@@ -165,15 +243,17 @@ const CustomerInfo = () => {
     }
   };
 
-  // Make submit function available to parent components
+  // Make functions available to parent components
   useEffect(() => {
     (window as any).submitOrder = handleSubmitOrder;
     (window as any).isSubmitting = isSubmitting;
+    (window as any).handleWhatsAppOrder = handleWhatsAppOrder;
     return () => {
       delete (window as any).submitOrder;
       delete (window as any).isSubmitting;
+      delete (window as any).handleWhatsAppOrder;
     };
-  }, [handleSubmitOrder, isSubmitting]);
+  }, [handleSubmitOrder, isSubmitting, handleWhatsAppOrder]);
 
   return (
     <div className="space-y-6">
@@ -320,6 +400,21 @@ const CustomerInfo = () => {
                 <p className="text-sm font-medium">Payment Method:</p>
                 <p className="text-sm">{order.paymentMethod === 'cash' ? 'Cash on Delivery' : 'Bank Transfer'}</p>
                 {order.receiptFile && <p className="text-sm text-green-600 mt-1">Receipt uploaded: {order.receiptFile.name}</p>}
+              </div>
+
+              {/* WhatsApp Order Button */}
+              <div className="pt-4">
+                <Button 
+                  onClick={handleWhatsAppOrder}
+                  className="w-full bg-green-500 hover:bg-green-600 text-white flex items-center justify-center gap-2"
+                  size="lg"
+                >
+                  <MessageSquare className="w-5 h-5" />
+                  Order via WhatsApp
+                </Button>
+                <p className="text-xs text-gray-500 text-center mt-2">
+                  Click to send order details via WhatsApp
+                </p>
               </div>
             </div>
           </CardContent>
