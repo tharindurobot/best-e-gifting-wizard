@@ -4,11 +4,15 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
+import { Calendar } from '@/components/ui/calendar';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { useOrder } from '@/context/OrderContext';
 import { useToast } from '@/hooks/use-toast';
 import { DataService } from '@/services/dataService';
 import { SupabaseDataService } from '@/services/supabaseDataService';
-import { MessageSquare } from 'lucide-react';
+import { MessageSquare, CalendarIcon } from 'lucide-react';
+import { format, addDays, isWeekend } from 'date-fns';
+import { cn } from '@/lib/utils';
 import emailjs from '@emailjs/browser';
 
 const CustomerInfo = () => {
@@ -25,7 +29,25 @@ const CustomerInfo = () => {
     billingAddress: order.customerInfo.billingAddress || ''
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [deliveryDate, setDeliveryDate] = useState('');
+  const [deliveryDate, setDeliveryDate] = useState<Date>();
+  const [isCalendarOpen, setIsCalendarOpen] = useState(false);
+
+  // Calculate minimum delivery date (4 business days from now)
+  const getMinDeliveryDate = () => {
+    let date = new Date();
+    let businessDays = 0;
+    
+    while (businessDays < 4) {
+      date = addDays(date, 1);
+      if (!isWeekend(date)) {
+        businessDays++;
+      }
+    }
+    
+    return date;
+  };
+
+  const minDeliveryDate = getMinDeliveryDate();
 
   const handleInputChange = (field: keyof typeof formData, value: string) => {
     const updatedData = {
@@ -38,8 +60,7 @@ const CustomerInfo = () => {
 
   const validateForm = () => {
     const required = ['fullName', 'billingAddress', 'address', 'email', 'phone'];
-    const hasDeliveryDate = deliveryDate.trim() !== '';
-    return required.every(field => formData[field as keyof typeof formData].trim() !== '') && hasDeliveryDate;
+    return required.every(field => formData[field as keyof typeof formData].trim() !== '') && deliveryDate;
   };
 
   const prepareWhatsAppMessage = () => {
@@ -77,7 +98,7 @@ const CustomerInfo = () => {
     message += `Phone: ${formData.phone}\n`;
     message += `Billing Address: ${formData.billingAddress}\n`;
     message += `Delivery Address: ${formData.address}\n`;
-    message += `Delivery Date: ${deliveryDate}\n`;
+    message += `Delivery Date: ${deliveryDate ? format(deliveryDate, 'PPP') : 'Not specified'}\n`;
     if (formData.comment) {
       message += `Additional Comments: ${formData.comment}\n`;
     }
@@ -113,8 +134,7 @@ const CustomerInfo = () => {
   const handleWhatsAppOrder = () => {
     const message = prepareWhatsAppMessage();
     if (message) {
-      // Replace with your actual WhatsApp business number
-      const whatsappNumber = "94771234567"; // Replace with actual number
+      const whatsappNumber = "94772056148";
       const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${message}`;
       window.open(whatsappUrl, '_blank');
     }
@@ -149,7 +169,7 @@ const CustomerInfo = () => {
       address: formData.address,
       billing_address: formData.billingAddress,
       comment: formData.comment || 'No additional comments',
-      delivery_date: deliveryDate || 'Not specified',
+      delivery_date: deliveryDate ? format(deliveryDate, 'PPP') : 'Not specified',
       greeting_card: order.greetingCard ? `${order.greetingCard.name} - Rs ${order.greetingCard.price.toFixed(2)}` : 'No greeting card selected',
       paper_fill_color: `Box Fills: ${fillInfo}`,
       cart_items: cartItemsWithTotal,
@@ -186,7 +206,7 @@ const CustomerInfo = () => {
         customerPhone: formData.phone,
         billingAddress: formData.billingAddress,
         deliveryAddress: formData.address,
-        deliveryDate: deliveryDate,
+        deliveryDate: deliveryDate ? format(deliveryDate, 'yyyy-MM-dd') : '',
         comment: formData.comment,
         selectedBox: order.box,
         selectedItems: order.items,
@@ -323,14 +343,38 @@ const CustomerInfo = () => {
               </div>
 
               <div>
-                <Label htmlFor="deliveryDate">Delivery Date *</Label>
-                <Input 
-                  id="deliveryDate" 
-                  type="date"
-                  value={deliveryDate} 
-                  onChange={e => setDeliveryDate(e.target.value)} 
-                  required
-                />
+                <Label>Delivery Date *</Label>
+                <Popover open={isCalendarOpen} onOpenChange={setIsCalendarOpen}>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant="outline"
+                      className={cn(
+                        "w-full justify-start text-left font-normal",
+                        !deliveryDate && "text-muted-foreground"
+                      )}
+                    >
+                      <CalendarIcon className="mr-2 h-4 w-4" />
+                      {deliveryDate ? format(deliveryDate, "PPP") : "Select delivery date"}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0" align="start">
+                    <Calendar
+                      mode="single"
+                      selected={deliveryDate}
+                      onSelect={(date) => {
+                        setDeliveryDate(date);
+                        setIsCalendarOpen(false);
+                      }}
+                      disabled={(date) => {
+                        return date < minDeliveryDate || isWeekend(date);
+                      }}
+                      initialFocus
+                    />
+                  </PopoverContent>
+                </Popover>
+                <p className="text-xs text-gray-500 mt-1">
+                  Minimum 4 business days from today (excludes weekends)
+                </p>
               </div>
 
               <div>
