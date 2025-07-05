@@ -44,7 +44,7 @@ const SelectBox = () => {
         <p className="text-gray-600">Select the perfect box for your special gift</p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
         {boxes.map(box => (
           <Card 
             key={box.id} 
@@ -53,19 +53,20 @@ const SelectBox = () => {
             }`}
             onClick={() => handleSelectBox(box)}
           >
-            <CardContent className="p-6">
-              <img src={box.image} alt={box.name} className="w-full h-48 object-cover rounded-lg mb-4" />
-              <h3 className="text-xl font-semibold mb-2">{box.name}</h3>
-              <p className="text-gray-600 mb-2">Color: {box.color}</p>
-              {box.paperFills && <p className="text-green-600 text-sm mb-2">✓ Free Paper Fills Included</p>}
-              <p className="text-2xl font-bold text-primary-600 mb-4">Rs {box.price.toFixed(2)}</p>
+            <CardContent className="p-4">
+              <img src={box.image} alt={box.name} className="w-full h-32 object-cover rounded-lg mb-3" />
+              <h3 className="text-lg font-semibold mb-2 line-clamp-2">{box.name}</h3>
+              <p className="text-gray-600 mb-1 text-sm">Color: {box.color}</p>
+              {box.paperFills && <p className="text-green-600 text-xs mb-2">✓ Free Paper Fills Included</p>}
+              <p className="text-xl font-bold text-primary-600 mb-3">Rs {box.price.toFixed(2)}</p>
               <Button 
                 onClick={(e) => {
                   e.stopPropagation();
                   handleSelectBox(box);
                 }} 
                 variant={order.box?.id === box.id ? "default" : "outline"} 
-                className="w-full"
+                className="w-full text-sm"
+                size="sm"
               >
                 {order.box?.id === box.id ? 'Selected ✓' : 'Select Box'}
               </Button>

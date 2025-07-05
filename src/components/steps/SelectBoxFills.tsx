@@ -44,7 +44,7 @@ const SelectBoxFills = () => {
         <p className="text-gray-600">Select decorative fills for your gift box (All Free!)</p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
         {boxFills.map((fill) => (
           <Card 
             key={fill.id} 
@@ -56,8 +56,8 @@ const SelectBoxFills = () => {
             }}
             onClick={() => handleFillToggle(fill.id)}
           >
-            <CardContent className="p-4">
-              <div className="aspect-square mb-3 rounded-lg overflow-hidden">
+            <CardContent className="p-3">
+              <div className="aspect-square mb-2 rounded-lg overflow-hidden">
                 <img
                   src={fill.image}
                   alt={fill.name}
@@ -65,9 +65,9 @@ const SelectBoxFills = () => {
                 />
               </div>
               <div className="space-y-2">
-                <h3 className="text-lg font-semibold">{fill.name}</h3>
+                <h3 className="text-sm font-semibold line-clamp-2">{fill.name}</h3>
                 <div className="flex items-center justify-between">
-                  <span className="text-green-600 font-medium">FREE</span>
+                  <span className="text-green-600 font-medium text-xs">FREE</span>
                   <Checkbox
                     checked={selectedFills.includes(fill.id)}
                     onCheckedChange={() => handleFillToggle(fill.id)}

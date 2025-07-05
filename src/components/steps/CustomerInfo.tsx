@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -63,7 +64,7 @@ const CustomerInfo = () => {
     return required.every(field => formData[field as keyof typeof formData].trim() !== '') && deliveryDate;
   };
 
-  const prepareWhatsAppMessage = () => {
+  const prepareWhatsAppMessage = async () => {
     if (!validateForm()) {
       toast({
         title: "Missing Information",
@@ -78,15 +79,21 @@ const CustomerInfo = () => {
       `• ${item.item.name} - Qty: ${item.quantity} - Rs ${(item.item.price * item.quantity).toFixed(2)}`
     ).join('\n');
 
-    // Prepare box fills
-    const boxFills = DataService.getBoxFills();
-    const selectedFillNames = order.selectedBoxFills.map(fillId => {
-      const fill = boxFills.find(f => f.id === fillId);
-      return fill ? fill.name : fillId;
-    });
-    const fillInfo = selectedFillNames.length > 0 
-      ? selectedFillNames.join(', ') 
-      : 'No box fills selected';
+    // Get box fills by name from Supabase
+    let fillInfo = 'No box fills selected';
+    if (order.selectedBoxFills.length > 0) {
+      try {
+        const boxFills = await SupabaseDataService.getBoxFills();
+        const selectedFillNames = order.selectedBoxFills.map(fillId => {
+          const fill = boxFills.find(f => f.id === fillId);
+          return fill ? fill.name : fillId;
+        }).filter(name => name);
+        fillInfo = selectedFillNames.length > 0 ? selectedFillNames.join(', ') : 'No box fills selected';
+      } catch (error) {
+        console.error('Error fetching box fills:', error);
+        fillInfo = 'Error loading box fills';
+      }
+    }
 
     // Create WhatsApp message
     let message = `🎁 *NEW ORDER REQUEST*\n\n`;
@@ -131,8 +138,8 @@ const CustomerInfo = () => {
     return encodeURIComponent(message);
   };
 
-  const handleWhatsAppOrder = () => {
-    const message = prepareWhatsAppMessage();
+  const handleWhatsAppOrder = async () => {
+    const message = await prepareWhatsAppMessage();
     if (message) {
       const whatsappNumber = "94772056148";
       const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${message}`;
