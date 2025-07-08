@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -139,11 +138,80 @@ const CustomerInfo = () => {
   };
 
   const handleWhatsAppOrder = async () => {
-    const message = await prepareWhatsAppMessage();
-    if (message) {
-      const whatsappNumber = "94772056148";
-      const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${message}`;
-      window.open(whatsappUrl, '_blank');
+    if (!validateForm()) {
+      toast({
+        title: "Missing Information",
+        description: "Please fill in all required fields including delivery date",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    setIsSubmitting(true);
+    
+    try {
+      // Upload bank slip if provided
+      let bankSlipUrl = null;
+      if (order.receiptFile) {
+        bankSlipUrl = await SupabaseDataService.uploadBankSlip(order.receiptFile);
+        if (!bankSlipUrl) {
+          throw new Error('Failed to upload bank slip');
+        }
+      }
+
+      // Save order to database first
+      const orderData = {
+        customerName: formData.fullName,
+        customerEmail: formData.email,
+        customerPhone: formData.phone,
+        billingAddress: formData.billingAddress,
+        deliveryAddress: formData.address,
+        deliveryDate: deliveryDate ? format(deliveryDate, 'yyyy-MM-dd') : '',
+        comment: formData.comment,
+        selectedBox: order.box,
+        selectedItems: order.items,
+        greetingCard: order.greetingCard,
+        totalAmount: getTotalPrice(),
+        paymentMethod: order.paymentMethod,
+        bankSlipUrl: bankSlipUrl
+      };
+
+      const savedOrder = await SupabaseDataService.saveOrder(orderData);
+      if (!savedOrder) {
+        throw new Error('Failed to save order to database');
+      }
+
+      console.log('Order saved to database:', savedOrder);
+
+      // Then send WhatsApp message
+      const message = await prepareWhatsAppMessage();
+      if (message) {
+        const whatsappNumber = "94772056148";
+        const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${message}`;
+        window.open(whatsappUrl, '_blank');
+        
+        toast({
+          title: "Order Placed Successfully!",
+          description: "Your order has been saved and WhatsApp opened for confirmation."
+        });
+
+        // Reset order after successful submission
+        setTimeout(() => {
+          resetOrder();
+        }, 3000);
+      }
+    } catch (error) {
+      console.error('WhatsApp order submission failed:', error);
+      
+      const errorMessage = error instanceof Error ? error.message : "There was an error placing your order. Please try again.";
+      
+      toast({
+        title: "Order Failed",
+        description: `Error: ${errorMessage}`,
+        variant: "destructive"
+      });
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -457,14 +525,15 @@ const CustomerInfo = () => {
               <div className="pt-4">
                 <Button 
                   onClick={handleWhatsAppOrder}
+                  disabled={isSubmitting}
                   className="w-full bg-green-500 hover:bg-green-600 text-white flex items-center justify-center gap-2"
                   size="lg"
                 >
                   <MessageSquare className="w-5 h-5" />
-                  Order via WhatsApp
+                  {isSubmitting ? 'Processing...' : 'Order via WhatsApp'}
                 </Button>
                 <p className="text-xs text-gray-500 text-center mt-2">
-                  Click to send order details via WhatsApp
+                  Click to save order and send details via WhatsApp
                 </p>
               </div>
             </div>

@@ -180,9 +180,9 @@ const SelectItems = () => {
             </div>
           </div>
 
-          {/* Items Grid */}
+          {/* Items Grid - Made smaller */}
           {filteredItems.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
               {filteredItems.map(item => {
                 const cartQuantity = getItemQuantityInCart(item.id);
                 const inputQuantity = quantities[item.id] || 1;
@@ -198,22 +198,23 @@ const SelectItems = () => {
                     }}
                     onClick={() => handleItemClick(item)}
                   >
-                    <CardContent className="p-6">
-                      <AspectRatio ratio={1} className="mb-4">
+                    <CardContent className="p-3">
+                      <AspectRatio ratio={1} className="mb-3">
                         <img src={item.image} alt={item.name} className="w-full h-full object-cover rounded-lg" />
                       </AspectRatio>
                       <div className="mb-2">
-                        <h3 className="text-lg font-semibold">{item.name}</h3>
+                        <h3 className="text-sm font-semibold line-clamp-2">{item.name}</h3>
                       </div>
-                      <p className="text-xl font-bold text-primary-600 mb-4">Rs {item.price.toFixed(2)}</p>
+                      <p className="text-lg font-bold text-primary-600 mb-3">Rs {item.price.toFixed(2)}</p>
                       
                       {cartQuantity > 0 && (
-                        <div className="mb-4 p-3 bg-primary-50 rounded-lg">
-                          <p className="text-sm text-primary-700">In cart: {cartQuantity}</p>
-                          <div className="flex gap-2 mt-2">
+                        <div className="mb-3 p-2 bg-primary-50 rounded-lg">
+                          <p className="text-xs text-primary-700">In cart: {cartQuantity}</p>
+                          <div className="flex gap-1 mt-2">
                             <Button 
                               size="sm" 
                               variant="outline" 
+                              className="h-6 w-6 p-0 text-xs"
                               onClick={(e) => {
                                 e.stopPropagation();
                                 updateItemQuantity(item.id, cartQuantity - 1);
@@ -224,6 +225,7 @@ const SelectItems = () => {
                             <Button 
                               size="sm" 
                               variant="outline" 
+                              className="h-6 w-6 p-0 text-xs"
                               onClick={(e) => {
                                 e.stopPropagation();
                                 updateItemQuantity(item.id, cartQuantity + 1);
@@ -234,6 +236,7 @@ const SelectItems = () => {
                             <Button 
                               size="sm" 
                               variant="destructive" 
+                              className="h-6 px-2 text-xs"
                               onClick={(e) => {
                                 e.stopPropagation();
                                 removeItem(item.id);
@@ -245,16 +248,16 @@ const SelectItems = () => {
                         </div>
                       )}
 
-                      <div className="flex items-center gap-2 mb-3">
+                      <div className="flex items-center gap-2 mb-2">
                         <Input 
                           type="number" 
                           min="1" 
                           value={inputQuantity} 
                           onChange={(e) => handleQuantityChange(item.id, parseInt(e.target.value) || 1)} 
-                          className="w-20"
+                          className="w-16 h-8 text-xs"
                           onClick={(e) => e.stopPropagation()}
                         />
-                        <span className="text-sm text-gray-600">qty</span>
+                        <span className="text-xs text-gray-600">qty</span>
                       </div>
 
                       <Button 
@@ -262,7 +265,8 @@ const SelectItems = () => {
                           e.stopPropagation();
                           handleAddItem(item);
                         }} 
-                        className="w-full"
+                        className="w-full h-8 text-xs"
+                        size="sm"
                       >
                         Add to Box
                       </Button>
