@@ -3,7 +3,7 @@ import React from 'react';
 import { Button } from '@/components/ui/button';
 import { useOrder } from '@/context/OrderContext';
 import { OrderStep } from '@/types';
-import { ChevronLeft, ChevronRight, MessageSquare } from 'lucide-react';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 const NavigationFooter = () => {
   const {
@@ -13,8 +13,8 @@ const NavigationFooter = () => {
     getTotalPrice
   } = useOrder();
 
-  // Swap payment and info steps
-  const steps: OrderStep[] = ['box', 'items', 'fills', 'card', 'info', 'payment'];
+  // Remove the 'info' step - payment is now the final step
+  const steps: OrderStep[] = ['box', 'items', 'fills', 'card', 'payment'];
   const currentStepIndex = steps.indexOf(currentStep);
   const canGoBack = currentStepIndex > 0;
   const canGoNext = currentStepIndex < steps.length - 1;
@@ -29,18 +29,6 @@ const NavigationFooter = () => {
   const handleNext = () => {
     if (canGoNext) {
       setCurrentStep(steps[currentStepIndex + 1]);
-    } else if (isLastStep) {
-      // Handle submit order logic for the last step
-      if ((window as any).submitOrder) {
-        (window as any).submitOrder();
-      }
-    }
-  };
-
-  const handleWhatsAppOrder = () => {
-    // Call the WhatsApp function from PaymentMethod component
-    if ((window as any).handleWhatsAppOrder) {
-      (window as any).handleWhatsAppOrder();
     }
   };
 
@@ -50,8 +38,7 @@ const NavigationFooter = () => {
       'items': 'Choose Items',
       'fills': 'Choose Fills',
       'card': 'Choose Greeting Card',
-      'info': 'Customer Info',
-      'payment': 'Payment Method'
+      'payment': 'Complete Order'
     };
     return labels[step];
   };
@@ -77,11 +64,7 @@ const NavigationFooter = () => {
             <p className="font-semibold text-primary-600">{getStepLabel(currentStep)}</p>
           </div>
 
-          {isLastStep ? (
-            <div className="flex gap-2">
-              {/* WhatsApp button moved to PaymentMethod component */}
-            </div>
-          ) : (
+          {!isLastStep && (
             <Button 
               onClick={handleNext} 
               className="flex items-center space-x-2 min-w-[120px] bg-primary-600 hover:bg-primary-700"
@@ -89,6 +72,12 @@ const NavigationFooter = () => {
               <span>Next</span>
               <ChevronRight className="w-4 h-4" />
             </Button>
+          )}
+          
+          {isLastStep && (
+            <div className="min-w-[120px]">
+              {/* Space for WhatsApp button in PaymentMethod component */}
+            </div>
           )}
         </div>
       </div>

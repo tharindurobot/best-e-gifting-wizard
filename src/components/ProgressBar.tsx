@@ -1,8 +1,11 @@
+
 import React from 'react';
 import { OrderStep } from '@/types';
+
 interface ProgressBarProps {
   currentStep: OrderStep;
 }
+
 const ProgressBar = ({
   currentStep
 }: ProgressBarProps) => {
@@ -24,16 +27,17 @@ const ProgressBar = ({
     number: 4
   }, {
     key: 'payment',
-    label: 'Payment',
+    label: 'Complete Order',
     number: 5
-  }, {
-    key: 'info',
-    label: 'Your Info',
-    number: 6
   }];
+
   const currentStepIndex = steps.findIndex(step => step.key === currentStep);
-  return <div className="bg-white shadow-sm border-b border-gray-200">
-      
-    </div>;
+
+  return (
+    <div className="bg-white shadow-sm border-b border-gray-200">
+      {/* Progress bar content can be implemented here if needed */}
+    </div>
+  );
 };
+
 export default ProgressBar;
