@@ -13,6 +13,7 @@ import { SupabaseDataService } from '@/services/supabaseDataService';
 import { MessageSquare, CalendarIcon } from 'lucide-react';
 import { format, addDays, isWeekend } from 'date-fns';
 import { cn } from '@/lib/utils';
+
 const PaymentMethod = () => {
   const {
     setPaymentMethod,
@@ -143,6 +144,32 @@ const PaymentMethod = () => {
     message += `\n✅ Please confirm this order. Thank you!`;
     return encodeURIComponent(message);
   };
+
+  const openWhatsApp = (message: string) => {
+    const whatsappNumber = "94772056148";
+    const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${message}`;
+    
+    // Detect if we're on iOS/Safari or mobile
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+    const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+    
+    // For iOS devices, use location.href instead of window.open
+    if (isIOS || (isSafari && isMobile)) {
+      window.location.href = whatsappUrl;
+    } else {
+      // For other browsers/devices, try window.open first
+      const whatsappWindow = window.open(whatsappUrl, '_blank');
+      
+      // Fallback: if window.open fails (blocked by popup blocker), use location.href
+      setTimeout(() => {
+        if (!whatsappWindow || whatsappWindow.closed || typeof whatsappWindow.closed === 'undefined') {
+          window.location.href = whatsappUrl;
+        }
+      }, 100);
+    }
+  };
+
   const handleWhatsAppOrder = async () => {
     if (!validateForm()) {
       toast({
@@ -152,6 +179,7 @@ const PaymentMethod = () => {
       });
       return;
     }
+
     setIsSubmitting(true);
     try {
       // Upload bank slip if provided
@@ -179,18 +207,19 @@ const PaymentMethod = () => {
         paymentMethod: order.paymentMethod,
         bankSlipUrl: bankSlipUrl
       };
+
       const savedOrder = await SupabaseDataService.saveOrder(orderData);
       if (!savedOrder) {
         throw new Error('Failed to save order to database');
       }
+
       console.log('Order saved to database:', savedOrder);
 
       // Then send WhatsApp message
       const message = await prepareWhatsAppMessage();
       if (message) {
-        const whatsappNumber = "94772056148";
-        const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${message}`;
-        window.open(whatsappUrl, '_blank');
+        openWhatsApp(message);
+        
         toast({
           title: "Order Placed Successfully!",
           description: "Your order has been saved and WhatsApp opened for confirmation."
@@ -400,4 +429,5 @@ const PaymentMethod = () => {
       </div>
     </div>;
 };
+
 export default PaymentMethod;
