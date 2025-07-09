@@ -35,7 +35,6 @@ const SelectItems = () => {
   const { data: items = [], isLoading, error } = useItems();
   const [quantities, setQuantities] = useState<{[key: string]: number}>({});
   const [selectedCategory, setSelectedCategory] = useState<string>('All Products');
-  const [selectedItems, setSelectedItems] = useState<Set<string>>(new Set());
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [sortBy, setSortBy] = useState<string>('name-asc');
 
@@ -46,14 +45,13 @@ const SelectItems = () => {
     }));
   };
 
-  const handleItemClick = (item: Item) => {
-    const newSelectedItems = new Set(selectedItems);
-    if (selectedItems.has(item.id)) {
-      newSelectedItems.delete(item.id);
-    } else {
-      newSelectedItems.add(item.id);
-    }
-    setSelectedItems(newSelectedItems);
+  const handleCardClick = (item: Item) => {
+    const quantity = quantities[item.id] || 1;
+    addItem(item, quantity);
+    setQuantities(prev => ({
+      ...prev,
+      [item.id]: 1
+    }));
   };
 
   const handleAddItem = (item: Item) => {
@@ -61,7 +59,7 @@ const SelectItems = () => {
     addItem(item, quantity);
     setQuantities(prev => ({
       ...prev,
-      [item.id]: 0
+      [item.id]: 1
     }));
   };
 
@@ -186,17 +184,14 @@ const SelectItems = () => {
               {filteredItems.map(item => {
                 const cartQuantity = getItemQuantityInCart(item.id);
                 const inputQuantity = quantities[item.id] || 1;
-                const isSelected = selectedItems.has(item.id);
                 return (
                   <Card 
                     key={item.id} 
-                    className={`hover:shadow-lg transition-all duration-300 cursor-pointer relative overflow-hidden ${
-                      isSelected ? 'ring-2 ring-primary-600 shadow-lg bg-primary-50' : ''
-                    }`}
+                    className="hover:shadow-lg transition-all duration-300 cursor-pointer relative overflow-hidden"
                     style={{
                       backgroundImage: `linear-gradient(135deg, rgba(148, 88, 15, 0.05) 0%, transparent 100%), url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%2394580f' fill-opacity='0.08'%3E%3Cpath d='m0 18 9-9h2v2l-9 9z'/%3E%3Cpath d='m10 10 9-9h2v2l-9 9z'/%3E%3C/g%3E%3C/svg%3E")`
                     }}
-                    onClick={() => handleItemClick(item)}
+                    onClick={() => handleCardClick(item)}
                   >
                     <CardContent className="p-3">
                       <AspectRatio ratio={1} className="mb-3">
