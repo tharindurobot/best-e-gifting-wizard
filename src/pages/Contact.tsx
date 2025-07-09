@@ -56,7 +56,7 @@ const Contact = () => {
                   <div className="flex space-x-4">
                     <Button variant="outline" size="sm">Facebook</Button>
                     <Button variant="outline" size="sm">Instagram</Button>
-                    <Button variant="outline" size="sm">Twitter</Button>
+                    
                   </div>
                 </CardContent>
               </Card>
