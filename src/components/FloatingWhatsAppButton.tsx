@@ -156,14 +156,12 @@ const FloatingWhatsAppButton = () => {
     }
   };
 
-  // Show button if we have items in the cart - simplified condition
-  const hasItems = order.items && order.items.length > 0;
-  
-  console.log('FloatingWhatsAppButton render:', { hasItems, itemsCount: order.items?.length });
-
-  if (!hasItems) {
-    return null;
-  }
+  // Always show the button for testing - we can add conditions later
+  console.log('FloatingWhatsAppButton render:', { 
+    hasItems: order.items?.length > 0, 
+    itemsCount: order.items?.length,
+    order: order 
+  });
 
   return (
     <div className="fixed bottom-6 right-6 z-50">
