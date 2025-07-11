@@ -5,6 +5,7 @@ import { MessageSquare } from 'lucide-react';
 import { useOrder } from '@/context/OrderContext';
 import { useToast } from '@/hooks/use-toast';
 import { SupabaseDataService } from '@/services/supabaseDataService';
+import { format } from 'date-fns';
 
 const FloatingWhatsAppButton = () => {
   const { order, getTotalPrice, resetOrder } = useOrder();
@@ -77,17 +78,23 @@ const FloatingWhatsAppButton = () => {
     const whatsappNumber = "94772056148";
     const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${message}`;
     
-    console.log('Opening WhatsApp with URL:', whatsappUrl);
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+    const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
     
-    // Force direct navigation for all cases
-    window.location.href = whatsappUrl;
+    if (isIOS || (isSafari && isMobile)) {
+      window.location.href = whatsappUrl;
+    } else {
+      const whatsappWindow = window.open(whatsappUrl, '_blank');
+      setTimeout(() => {
+        if (!whatsappWindow || whatsappWindow.closed || typeof whatsappWindow.closed === 'undefined') {
+          window.location.href = whatsappUrl;
+        }
+      }, 100);
+    }
   };
 
   const handleWhatsAppOrder = async () => {
-    console.log('WhatsApp button clicked');
-    console.log('Order items:', order.items);
-    console.log('Form validation:', validateForm());
-    
     if (!validateForm()) {
       toast({
         title: "Missing Information",
@@ -156,19 +163,17 @@ const FloatingWhatsAppButton = () => {
     }
   };
 
-  // Always show the button for testing - we can add conditions later
-  console.log('FloatingWhatsAppButton render:', { 
-    hasItems: order.items?.length > 0, 
-    itemsCount: order.items?.length,
-    order: order 
-  });
+  // Only show button if we have items in the cart
+  if (order.items.length === 0) {
+    return null;
+  }
 
   return (
-    <div className="fixed bottom-6 right-6 z-50">
+    <div className="fixed bottom-4 right-4 z-50">
       <Button
         onClick={handleWhatsAppOrder}
-        disabled={isSubmitting}
-        className="bg-green-500 hover:bg-green-600 text-white shadow-lg flex items-center gap-2 rounded-full px-6 py-3 min-w-[180px]"
+        disabled={isSubmitting || !validateForm()}
+        className="bg-green-500 hover:bg-green-600 text-white shadow-lg flex items-center gap-2 rounded-full px-6 py-3"
         size="lg"
       >
         <MessageSquare className="w-5 h-5" />
