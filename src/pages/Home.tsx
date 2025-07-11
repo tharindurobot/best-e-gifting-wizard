@@ -12,11 +12,10 @@ import SelectGreetingCard from '@/components/steps/SelectGreetingCard';
 import PaymentMethod from '@/components/steps/PaymentMethod';
 import NavigationFooter from '@/components/NavigationFooter';
 import ScrollToTopButton from '@/components/ScrollToTopButton';
+import FloatingWhatsAppButton from '@/components/FloatingWhatsAppButton';
 
 const Home = () => {
-  const {
-    currentStep
-  } = useOrder();
+  const { currentStep } = useOrder();
   const [isMigrating, setIsMigrating] = useState(false);
   const [migrationComplete, setMigrationComplete] = useState(false);
 
@@ -61,6 +60,7 @@ const Home = () => {
 
       <NavigationFooter />
       <ScrollToTopButton />
+      <FloatingWhatsAppButton />
       
       {/* Copyright Caption */}
       <div className="text-center pt-4 pb-6 px-4 text-sm text-gray-600">
