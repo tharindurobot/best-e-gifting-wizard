@@ -15,9 +15,11 @@ import ScrollToTopButton from '@/components/ScrollToTopButton';
 import FloatingWhatsAppButton from '@/components/FloatingWhatsAppButton';
 
 const Home = () => {
-  const { currentStep } = useOrder();
+  const { currentStep, order } = useOrder();
   const [isMigrating, setIsMigrating] = useState(false);
   const [migrationComplete, setMigrationComplete] = useState(false);
+
+  console.log('Home component render - order items:', order.items?.length);
 
   const handleMigration = async () => {
     setIsMigrating(true);
