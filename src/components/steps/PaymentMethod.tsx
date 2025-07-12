@@ -144,7 +144,7 @@ const PaymentMethod = () => {
     return encodeURIComponent(message);
   };
   const openWhatsApp = (message: string) => {
-    const whatsappNumber = "94772056148";
+    const whatsappNumber = "94772291871";
     const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${message}`;
 
     // Detect if we're on iOS/Safari or mobile

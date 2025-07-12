@@ -1,19 +1,24 @@
+
 import React from 'react';
 import { useOrder } from '@/context/OrderContext';
 import { MessageCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
 import Navigation from './Navigation';
+
 const Header = () => {
   const {
     getTotalPrice,
     order
   } = useOrder();
   const itemCount = order.items.reduce((total, item) => total + item.quantity, 0);
+  
   const handleWhatsAppClick = () => {
-    window.open('https://wa.me/94712345678', '_blank');
+    window.open('https://wa.me/94772291871', '_blank');
   };
-  return <header className="bg-gradient-to-r from-primary-700 to-primary-900 text-white shadow-lg sticky top-0 z-40">
+  
+  return (
+    <header className="bg-gradient-to-r from-primary-700 to-primary-900 text-white shadow-lg sticky top-0 z-40">
       <div className="container mx-auto px-[19px] py-[11px]">
         <div className="flex justify-between items-center">
           <Link to="/" className="flex items-center space-x-3 hover:opacity-80 transition-opacity">
@@ -56,6 +61,8 @@ const Header = () => {
           </div>
         </div>
       </div>
-    </header>;
+    </header>
+  );
 };
+
 export default Header;
