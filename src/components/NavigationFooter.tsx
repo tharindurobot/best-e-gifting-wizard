@@ -3,7 +3,7 @@ import React from 'react';
 import { Button } from '@/components/ui/button';
 import { useOrder } from '@/context/OrderContext';
 import { OrderStep } from '@/types';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { ChevronLeft, ChevronRight, MessageSquare } from 'lucide-react';
 
 const NavigationFooter = () => {
   const {
@@ -45,6 +45,12 @@ const NavigationFooter = () => {
 
   const isSubmitting = (window as any).isSubmitting || false;
 
+  const handleWhatsAppOrder = () => {
+    if ((window as any).handleWhatsAppOrder) {
+      (window as any).handleWhatsAppOrder();
+    }
+  };
+
   return (
     <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-lg z-50">
       <div className="container mx-auto px-4 py-[7px]">
@@ -75,9 +81,14 @@ const NavigationFooter = () => {
           )}
           
           {isLastStep && (
-            <div className="min-w-[120px]">
-              {/* Space for WhatsApp button in PaymentMethod component */}
-            </div>
+            <Button 
+              onClick={handleWhatsAppOrder} 
+              disabled={isSubmitting} 
+              className="flex items-center space-x-2 min-w-[120px] bg-green-500 hover:bg-green-600 text-white"
+            >
+              <MessageSquare className="w-4 h-4" />
+              <span>{isSubmitting ? 'Processing...' : 'Order via WhatsApp'}</span>
+            </Button>
           )}
         </div>
       </div>
