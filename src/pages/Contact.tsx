@@ -31,7 +31,7 @@ const Contact = () => {
                   </div>
                   <div>
                     <h3 className="font-semibold text-primary-700">📞 Phone</h3>
-                    <p className="text-gray-600">+94 712 345 678</p>
+                    <p className="text-gray-600">0772291871</p>
                   </div>
                   <div>
                     <h3 className="font-semibold text-primary-700">📍 Address</h3>
