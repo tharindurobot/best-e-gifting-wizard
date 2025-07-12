@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -268,19 +269,6 @@ const PaymentMethod = () => {
         <p className="text-gray-600">Fill in your details and choose payment method</p>
       </div>
 
-      {/* Address Difference Notice */}
-      {addressesDifferent && (
-        <div className="bg-red-50 border border-red-200 rounded-lg p-4 flex items-start space-x-3">
-          <AlertTriangle className="h-5 w-5 text-red-600 mt-0.5 flex-shrink-0" />
-          <div className="text-red-800">
-            <p className="font-medium">Payment Required</p>
-            <p className="text-sm mt-1">
-              If the billing address and delivery address are different, it is mandatory to complete the payment first.
-            </p>
-          </div>
-        </div>
-      )}
-
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {/* Customer Information Form */}
         <Card>
@@ -467,6 +455,19 @@ const PaymentMethod = () => {
                   </div>
                 </div>
               </RadioGroup>
+
+              {/* Address Difference Notice - Moved here */}
+              {addressesDifferent && (
+                <div className="bg-red-50 border border-red-200 rounded-lg p-4 flex items-start space-x-3 mt-4">
+                  <AlertTriangle className="h-5 w-5 text-red-600 mt-0.5 flex-shrink-0" />
+                  <div className="text-red-800">
+                    <p className="font-medium">Payment Required</p>
+                    <p className="text-sm mt-1">
+                      If the billing address and delivery address are different, it is mandatory to complete the payment first.
+                    </p>
+                  </div>
+                </div>
+              )}
 
               {selectedPayment === 'bank' && (
                 <div className="mt-6 space-y-4 animate-fade-in">
