@@ -35,7 +35,7 @@ const Contact = () => {
                   </div>
                   <div>
                     <h3 className="font-semibold text-primary-700">📍 Address</h3>
-                    <p className="text-gray-600">No. 123, Main Street, Colombo, Sri Lanka</p>
+                    <p className="text-gray-600">26/2, ihagama medawala harispatthuwa</p>
                   </div>
                   <div>
                     <h3 className="font-semibold text-primary-700">Business Hours</h3>
