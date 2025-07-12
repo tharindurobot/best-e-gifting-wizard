@@ -27,7 +27,7 @@ const Contact = () => {
                 <CardContent className="space-y-4">
                   <div>
                     <h3 className="font-semibold text-primary-700">📧 Email</h3>
-                    <p className="text-gray-600">info@giftstore.com</p>
+                    <p className="text-gray-600">salesbeste9@gmail.com</p>
                   </div>
                   <div>
                     <h3 className="font-semibold text-primary-700">📞 Phone</h3>
