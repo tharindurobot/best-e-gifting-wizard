@@ -13,7 +13,6 @@ const Navigation = () => {
     { name: 'Home', path: '/' },
     { name: 'About Us', path: '/about' },
     { name: 'Contact Us', path: '/contact' },
-    { name: 'Admin', path: '/admin' },
   ];
 
   const isActiveRoute = (path: string) => {
