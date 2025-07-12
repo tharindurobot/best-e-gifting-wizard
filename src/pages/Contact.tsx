@@ -38,12 +38,8 @@ const Contact = () => {
                     <p className="text-gray-600">26/2, ihagama medawala harispatthuwa</p>
                   </div>
                   <div>
-                    <h3 className="font-semibold text-primary-700">Business Hours</h3>
-                    <p className="text-gray-600">
-                      Monday - Friday: 9:00 AM - 6:00 PM<br />
-                      Saturday: 10:00 AM - 4:00 PM<br />
-                      Sunday: Closed
-                    </p>
+                    <h3 className="font-semibold text-primary-700">Business Hours : 24/7 open</h3>
+                    
                   </div>
                 </CardContent>
               </Card>
