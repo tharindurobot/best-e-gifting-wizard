@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -256,10 +255,10 @@ const PaymentMethod = () => {
   }, [handleWhatsAppOrder, isSubmitting]);
 
   const bankDetails = {
-    bankName: 'National Bank',
-    accountNumber: '1234567890',
-    accountName: 'BEST E Gift Boxes',
-    branch: 'Main Branch'
+    bankName: 'DFCC Bank',
+    accountNumber: '101001134907',
+    accountName: 'Nuwara Products Pvt Ltd',
+    branch: 'Deniyaya Branch'
   };
 
   return (
