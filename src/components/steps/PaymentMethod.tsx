@@ -11,7 +11,7 @@ import { useOrder } from '@/context/OrderContext';
 import { useToast } from '@/hooks/use-toast';
 import { SupabaseDataService } from '@/services/supabaseDataService';
 import { MessageSquare, CalendarIcon, AlertTriangle } from 'lucide-react';
-import { format, addDays, isWeekend } from 'date-fns';
+import { format, addDays } from 'date-fns';
 import { cn } from '@/lib/utils';
 
 const PaymentMethod = () => {
@@ -42,19 +42,8 @@ const PaymentMethod = () => {
                             formData.address.trim() !== '' && 
                             formData.billingAddress.trim().toLowerCase() !== formData.address.trim().toLowerCase();
 
-  // Calculate minimum delivery date (4 business days from now)
-  const getMinDeliveryDate = () => {
-    let date = new Date();
-    let businessDays = 0;
-    while (businessDays < 4) {
-      date = addDays(date, 1);
-      if (!isWeekend(date)) {
-        businessDays++;
-      }
-    }
-    return date;
-  };
-  const minDeliveryDate = getMinDeliveryDate();
+  // Calculate minimum delivery date (4 days from now, including weekends)
+  const minDeliveryDate = addDays(new Date(), 4);
 
   // Auto-select bank transfer when addresses are different
   useEffect(() => {
@@ -352,14 +341,14 @@ const PaymentMethod = () => {
                         setIsCalendarOpen(false);
                       }}
                       disabled={(date) => {
-                        return date < minDeliveryDate || isWeekend(date);
+                        return date < minDeliveryDate;
                       }}
                       initialFocus
                     />
                   </PopoverContent>
                 </Popover>
                 <p className="text-xs text-gray-500 mt-1">
-                  Minimum 4 business days from today (excludes weekends)
+                  Minimum 4 days from today (includes weekends)
                 </p>
               </div>
 
